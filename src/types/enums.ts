@@ -3,4 +3,8 @@ export enum BotStep {
   age = 'age',
   phone = 'phone',
   gender = 'gender',
+  name = 'name',
+  city = 'city',
+  promo = 'promo',
+  registered = 'registered',
 }

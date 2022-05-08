@@ -1,11 +1,31 @@
 import { wrap } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/mysql';
 import { Injectable } from '@nestjs/common';
-import { UserLocale, User } from 'src/modules/mikroorm/entities/User';
+import { City } from 'src/modules/mikroorm/entities/City';
+import { Promo } from 'src/modules/mikroorm/entities/Promo';
+import { Locale, User } from 'src/modules/mikroorm/entities/User';
 import { BotContext } from 'src/types/interfaces';
 
 @Injectable()
 export class globalService {
+  async updatePromo(from: number, id: number) {
+    await this.em.nativeUpdate(
+      User,
+      { chatId: String(from) },
+      {
+        promo: this.em.getReference(Promo, id),
+      },
+    );
+  }
+  async updateCity(from: number, id: number) {
+    await this.em.nativeUpdate(
+      User,
+      { chatId: String(from) },
+      {
+        city: this.em.getReference(City, id),
+      },
+    );
+  }
   async updateUser(from: number, options: Partial<User>) {
     await this.em.nativeUpdate(User, { chatId: String(from) }, options);
   }
@@ -16,7 +36,6 @@ export class globalService {
       user = this.em.create(User, {
         chatId: String(ctx.from.id),
         username: ctx.from.username,
-        firstName: String(ctx.from.first_name),
       });
       await this.em.persistAndFlush(user);
     }

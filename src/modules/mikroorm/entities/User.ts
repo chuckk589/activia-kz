@@ -1,11 +1,25 @@
-import { BeforeCreate, BeforeUpdate, Entity, Enum, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import {
+  BeforeCreate,
+  BeforeUpdate,
+  Collection,
+  Entity,
+  Enum,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+  Unique,
+} from '@mikro-orm/core';
 import { compare, hash } from 'bcrypt';
+import { City } from './City';
+import { Promo } from './Promo';
+import { Check } from './Check';
 
 export enum UserRole {
   ADMIN = 'admin',
   USER = 'user',
 }
-export enum UserLocale {
+export enum Locale {
   RU = 'ru',
   UZ = 'uz',
 }
@@ -28,22 +42,34 @@ export class User {
   username?: string;
 
   @Property({ length: 255, nullable: true })
-  firstName?: string;
+  credentials?: string;
 
   @Property({ length: 255, nullable: true })
   password?: string;
 
-  @Enum({ items: () => UserLocale, default: UserLocale.RU })
-  locale?: UserLocale;
+  @Enum({ items: () => Locale, default: Locale.RU })
+  locale: Locale;
 
   @Enum({ items: () => UserRole, default: UserRole.USER })
-  role?: UserRole;
+  role: UserRole;
 
-  @Property()
-  phone: string;
+  @Property({ nullable: true })
+  phone?: string;
 
-  @Property()
-  gender: string;
+  @Property({ default: false })
+  registered?: boolean;
+
+  @ManyToOne(() => City, { nullable: true })
+  city?: City;
+
+  @ManyToOne(() => Promo, { nullable: true })
+  promo?: City;
+
+  @OneToMany(() => Check, (check) => check.user)
+  checks = new Collection<Check>(this);
+
+  @Enum({ items: () => UserGender, nullable: true })
+  gender?: UserGender;
 
   @Property()
   createdAt: Date = new Date();
