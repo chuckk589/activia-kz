@@ -17,6 +17,7 @@ export class Translation {
   getLocalizedLabel(locale: Locale): string {
     return this.values?.toArray().find((v) => v.code == locale)?.value ?? this.name;
   }
+
   getAllLabels(): { [key in Locale]: string } {
     return this.values.toArray().reduce((acc: { [key in Locale]: string }, cur) => {
       acc[cur.code] = cur.value;

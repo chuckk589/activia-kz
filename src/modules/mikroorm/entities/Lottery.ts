@@ -1,4 +1,4 @@
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import { Cascade, Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 import { CustomBaseEntity } from './CustomBaseEntity';
 import { LotteryStatus } from './LotteryStatus';
 import { Prize } from './Prize';
@@ -29,7 +29,7 @@ export class Lottery extends CustomBaseEntity {
   @ManyToOne(() => Prize)
   prize!: Prize;
 
-  @OneToMany(() => Winner, (winner) => winner.lottery)
+  @OneToMany(() => Winner, (winner) => winner.lottery, { orphanRemoval: true })
   winners = new Collection<Winner>(this);
   //TODO: automatic status on create
 }

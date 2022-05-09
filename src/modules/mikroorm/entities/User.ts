@@ -63,7 +63,7 @@ export class User {
   city?: City;
 
   @ManyToOne(() => Promo, { nullable: true })
-  promo?: City;
+  promo?: Promo;
 
   @OneToMany(() => Check, (check) => check.user)
   checks = new Collection<Check>(this);

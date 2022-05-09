@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLotteryDto } from './create-lottery.dto';
+import { IsNumberString } from 'class-validator';
 
-export class UpdateLotteryDto extends PartialType(CreateLotteryDto) {}
+export class UpdateLotteryDto {
+  @IsNumberString()
+  status: string;
+}
