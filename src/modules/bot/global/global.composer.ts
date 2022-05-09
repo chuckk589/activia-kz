@@ -18,7 +18,7 @@ export class globalComposer extends BaseComposer {
 
   @Use()
   menu = new Menu<BotContext>('any').dynamic((ctx, range) => {
-    const locale = ctx.i18n.locale() in Locale ? (ctx.i18n.locale() as Locale) : 'ru';
+    const locale = (ctx.i18n.locale() in Locale ? ctx.i18n.locale() : 'ru') as Locale;
     switch (ctx.session.step) {
       case BotStep.default: {
         ['ru', 'uz'].map((lang) =>
@@ -34,9 +34,6 @@ export class globalComposer extends BaseComposer {
       case BotStep.age: {
         range.text(label({ text: 'yes' }), async (ctx) => {
           ctx.session.step = BotStep.phone;
-          // await ctx.editMessageCaption({
-          //   caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPhone'),
-          // });
           await ctx.reply('askPhone', { reply_markup: new Keyboard().requestContact('contact') });
         });
         range.text(label({ text: 'no' }), async (ctx) => {

@@ -4,5 +4,9 @@
     "checkAccepted":"Ваш чек принят ${id}",
     "getRules":"Перейти <a href = '${link}'>ссылке</a>",
     "myChecks":"Мои чеки",
-    "noChecks":"Нет чеков"
+    "noChecks":"Нет чеков",
+    "myPrizes":"Мои призы",
+    "week":"Неделя",
+    "winners":"Победители",
+    "winnersOfWeek":"Победители ${date} недели"
 }

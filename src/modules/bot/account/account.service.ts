@@ -1,21 +1,53 @@
-import { EntityManager, UniqueConstraintViolationException, wrap } from '@mikro-orm/core';
+import { EntityDTO, EntityManager, UniqueConstraintViolationException, wrap } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
-import { User } from 'src/modules/mikroorm/entities/User';
+import { Locale, User } from 'src/modules/mikroorm/entities/User';
 import { BotContext } from 'src/types/interfaces';
 import axios from 'axios';
 import fs from 'fs';
 import { Check } from 'src/modules/mikroorm/entities/Check';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { checkMessage } from '../common/helpers';
+import { checkMessage, prizeMessage } from '../common/helpers';
+import { Winner } from 'src/modules/mikroorm/entities/Winner';
+import { CheckState } from 'src/modules/mikroorm/entities/CheckStatus';
+import { BotLotteryDto, Lottery } from 'src/modules/mikroorm/entities/Lottery';
+import { LotteryState } from 'src/modules/mikroorm/entities/LotteryStatus';
 
 @Injectable()
 export class AccountService {
+  async getLotteries(ctx: BotContext): Promise<BotLotteryDto[]> {
+    const lotteries = await this.em.find(
+      Lottery,
+      {
+        winners: {
+          confirmed: true,
+          check: { status: { name: CheckState.APPROVED } },
+        },
+        status: { name: LotteryState.ENDED },
+      },
+      { populate: ['prize.translation', 'winners.check', 'winners.check.user'] },
+    );
+    return lotteries.map((l) => new BotLotteryDto(l, ctx.i18n.locale() as Locale));
+  }
+  async getUserLotteries(ctx: BotContext): Promise<string> {
+    const lotteries = await this.em.find(
+      Lottery,
+      {
+        winners: {
+          confirmed: true,
+          check: { user: { chatId: String(ctx.from.id) }, status: { name: CheckState.APPROVED } },
+        },
+        status: { name: LotteryState.ENDED },
+      },
+      { populate: ['prize.translation', 'winners.check'] },
+    );
+    return prizeMessage(ctx, lotteries);
+  }
   async getUserChecks(ctx: BotContext): Promise<string> {
     const checks = await this.em.find(
       Check,
       { user: { chatId: String(ctx.from.id) } },
-      //FIXME: { populate: ['status.comment', 'status.translation'] },
+      { populate: ['status.comment', 'status.translation.values'] },
     );
     return checkMessage(ctx, checks);
   }
@@ -30,7 +62,6 @@ export class AccountService {
       await this.em.persistAndFlush(user);
       return check;
     } catch (error) {
-      console.log(error);
       if (error.code === 'ER_DUP_ENTRY') {
         this.logger.warn(`Failed to insert new check: ER_DUP_ENTRY ${user.chatId}`);
         return await this.insertNewCheck(user, path);

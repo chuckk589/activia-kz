@@ -1,4 +1,7 @@
 module.exports = {
+  globals: {
+    "localStorage": true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: 'tsconfig.json',

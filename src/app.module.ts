@@ -16,6 +16,11 @@ import { AccountComposer } from './modules/bot/account/account.composer';
 import { LoggerModule } from 'nestjs-pino';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CheckModule } from './modules/check/check.module';
+import { LotteryModule } from './modules/lottery/lottery.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { StatusModule } from './modules/status/status.module';
 
 @Module({
   imports: [
@@ -26,6 +31,8 @@ import { join } from 'path';
         return {
           type: 'mysql',
           allowGlobalContext: true,
+          debug: true,
+          logger: console.log.bind(console),
           entities: ['./dist/src/modules/mikroorm/entities/'],
           entitiesTs: ['./src/modules/mikroorm/entities/'],
           clientUrl: configService.get('database', { infer: true }),
@@ -47,6 +54,11 @@ import { join } from 'path';
     }),
     LoggerModule.forRoot(),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
+    UserModule,
+    LotteryModule,
+    CheckModule,
+    AuthModule,
+    StatusModule,
   ],
   controllers: [],
   providers: [],

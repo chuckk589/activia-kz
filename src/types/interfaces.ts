@@ -9,6 +9,8 @@ import { Locale, User } from 'src/modules/mikroorm/entities/User';
 import { globalComposer } from 'src/modules/bot/global/global.composer';
 import { City } from 'src/modules/mikroorm/entities/City';
 import { Promo } from 'src/modules/mikroorm/entities/Promo';
+import { EntityDTO } from '@mikro-orm/core';
+import { BotLotteryDto, Lottery } from 'src/modules/mikroorm/entities/Lottery';
 
 export class BotContext extends Context implements SessionFlavor<Session>, I18nContextFlavor, MenuFlavor {
   constructor(update: Update, api: Api, me: UserFromGetMe) {
@@ -55,16 +57,14 @@ export interface Session {
   menuId: number;
   step: BotStep;
   isRegistered: boolean;
+  winners: BotLotteryDto[];
 }
 
 export class TranslatableConfig {
   constructor(payload: Promo | City) {
     this.id = payload.id;
     this.key = payload.name;
-    this.translation = payload.translation.values.toArray().reduce((acc: any, cur) => {
-      acc[cur.code] = cur.value;
-      return acc;
-    }, {});
+    this.translation = payload.translation.getAllLabels();
   }
   id: number;
   key: string;

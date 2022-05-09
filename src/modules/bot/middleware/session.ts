@@ -6,6 +6,7 @@ const initial = (): Session => ({
   menuId: undefined,
   step: BotStep.default,
   isRegistered: undefined,
+  winners: undefined,
 });
 
 function getSessionKey(ctx: BotContext): string | undefined {

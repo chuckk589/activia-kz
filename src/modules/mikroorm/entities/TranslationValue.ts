@@ -13,6 +13,6 @@ export class TranslationValue {
   @Enum({ items: () => Locale })
   code!: Locale;
 
-  @ManyToOne(() => Translation)
+  @ManyToOne(() => Translation, { mapToPk: true })
   translation!: Translation;
 }
