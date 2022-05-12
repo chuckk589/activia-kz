@@ -6,7 +6,7 @@ import { User } from 'src/modules/mikroorm/entities/User';
     entities: ['./src/modules/mikroorm/entities/'],
     dbName: 'activia-uz',
     type: 'mysql',
-    clientUrl: 'mysql://root:gumioqi226@127.0.0.1:3306/activia-uz',
+    clientUrl: 'mysql://root:admin@127.0.0.1:3306/activia-uz',
   });
   const generator = orm.getSchemaGenerator();
 

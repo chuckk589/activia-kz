@@ -85,11 +85,11 @@ export class globalComposer extends BaseComposer {
         range.text(label({ text: 'startForward' }), async (ctx) => {
           const ids = await this.globalService.getUserChatIds();
           const data = { total: ids.length, processed: 0, errors: 0 };
-          for (let i = 0; i < 300; i++) {
+          for (let i = 0; i < ids.length; i++) {
             try {
-              //await this.globalService.singleForward(ctx.session.bulkId, ctx.from.id, ids[0]);
+              await this.globalService.singleForward(ctx.session.bulkId, ctx.from.id, ids[i]);
               data.processed++;
-              (i % 10 === 0 || i == 299) &&
+              (i % 10 === 0 || i == ids.length - 1) &&
                 (await ctx.editMessageText(ctx.i18n.t('bulkProgress', data), { reply_markup: null }));
             } catch (error) {
               data.errors++;

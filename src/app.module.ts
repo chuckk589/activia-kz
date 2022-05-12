@@ -23,6 +23,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { StatusModule } from './modules/status/status.module';
 import { WinnerModule } from './modules/winner/winner.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { MySqlDriver } from '@mikro-orm/mysql/MySqlDriver';
 
 @Module({
   imports: [
@@ -33,6 +34,9 @@ import { TelegramModule } from './telegram/telegram.module';
         return {
           type: 'mysql',
           allowGlobalContext: true,
+          driverOptions: {
+            connection: { socketPath: '/var/lib/mysql/mysql.sock' },
+          },
           // debug: true,
           // logger: console.log.bind(console),
           entities: ['./dist/modules/mikroorm/entities/'],
