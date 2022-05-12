@@ -15,6 +15,7 @@
     "build": "vue-cli-service build vue/main.js && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "gen": "ts-node ./src/utils/generate-entities.ts",
     "start:dev": "SET NODE_ENV=development&& nodemon src/main.ts",
     "start:prod": "node dist/main.js",
     "start:debug": "NODE_ENV=debug node dist/index.js | pino-pretty"
