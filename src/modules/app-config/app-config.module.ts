@@ -1,6 +1,6 @@
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
-import { ConfigModule, ConfigModuleOptions } from '@nestjs/config';
+import { ConfigModule, ConfigModuleOptions, ConfigService } from '@nestjs/config';
 import { Config } from 'src/modules/mikroorm/entities/Config';
 import { TranslatableConfig } from 'src/types/interfaces';
 import { City } from '../mikroorm/entities/City';
@@ -8,11 +8,14 @@ import { Promo } from '../mikroorm/entities/Promo';
 import { AppConfigService } from './app-config.service';
 
 @Global()
-@Module({})
+@Module({
+  providers: [AppConfigService],
+  exports: [AppConfigService],
+})
 export class AppConfigModule {
   constructor(private readonly em: EntityManager) {}
-  public static forRootAsync(options: ConfigModuleOptions = {}): DynamicModule {
-    const BotOptionsProvider: Provider = {
+  public static async forRootAsync(options: ConfigModuleOptions = {}): Promise<DynamicModule> {
+    const ConfigProvider: Provider = {
       provide: 'any',
       useFactory: async (orm: MikroORM) => {
         const configs = await orm.em.find(Config, {});
@@ -35,9 +38,9 @@ export class AppConfigModule {
     };
     return {
       module: AppConfigModule,
-      imports: [ConfigModule.forRoot(options)],
-      providers: [BotOptionsProvider, AppConfigService],
-      exports: [ConfigModule, AppConfigService],
+      imports: [ConfigModule.forRoot()],
+      providers: [ConfigProvider],
+      exports: [ConfigModule],
     };
   }
 }

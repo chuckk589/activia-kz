@@ -7,16 +7,14 @@
     </CExtendedModal>
     <CDataTable sorter hover :items="items" :fields="fields" column-filter @row-clicked="rowClick">
       <template #over-table>
-        <CLink class="btn btn-primary mb-2" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
+        <CLink class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
-        <CButton style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">Новый розыгрыш</CButton>
+        <CButton size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">Новый розыгрыш</CButton>
       </template>
       <template #action="{ item }">
         <td>
-          <CDropdown toggler-text="Действия" class="m-2" color="secondary">
+          <CDropdown size="sm" toggler-text="Действия" class="m-2" color="primary">
             <CDropdownItem @click="changeLotteryStatus(item)">Изменить</CDropdownItem>
-            <CDropdownItem :href="getCurrentItems([item])" download="table-data.csv" target="_blank">Скачать (.csv)
-            </CDropdownItem>
             <CDropdownItem @click="deleteLottery(item)">Удалить</CDropdownItem>
           </CDropdown>
         </td>
@@ -43,12 +41,12 @@
             <CCol>{{ winner.phone }}</CCol>
             <CCol>{{ winner.city }}</CCol>
             <CCol>
-              <CButton @click="viewCheck(winner.checkPath)" color="primary">
+              <CButton size="sm" @click="viewCheck(winner.checkPath)" color="primary">
                 <CIcon size="lg" name="cilImage" />
               </CButton>
             </CCol>
             <CCol>
-              <CDropdown toggler-text="Действия" class="m-2" color="secondary">
+              <CDropdown toggler-text="Действия" class="m-2" size="sm" color="primary">
                 <CDropdownItem @click="sendNotify(winner)">Уведомить о выигрыше</CDropdownItem>
                 <CDropdownItem @click="approveWinner(winner)">Подтвердить</CDropdownItem>
               </CDropdown>
@@ -114,17 +112,17 @@ export default {
       }
     },
     sendNotify(item) {
-      this.$http({ method: 'PUT', url: `/v1/winner/${item.id}/notification` }).then(e => {
-        item.notified = 1
+      this.$http({ method: 'POST', url: `/v1/winner/${item.id}/notification` }).then(e => {
+        item.notified = true
       })
     },
     approveWinner(item) {
       this.$http({
         method: 'PUT', url: `/v1/winner/${item.id}`, data: {
-          confirmed: 1
+          confirmed: "1"
         }
       }).then(e => {
-        item.confirmed = 1
+        item.confirmed = true
       })
     },
     newLotteryInit() {
@@ -132,7 +130,7 @@ export default {
         fields: [
           { label: 'Дата розыгрыша', key: "start", type: "date" },
           { label: 'Конец', key: 'end', type: "date" },
-          { label: 'Что разыгрываем', key: "prizeId", select: this.$ctable.PRIZE, value: this.$ctable.PRIZE[0].value },
+          { label: 'Что разыгрываем', key: "prize", select: this.$ctable.prizes, value: this.$ctable.prizes[0].value },
           { label: 'Основные победители', key: "primaryWinners", type: "number" },
           { label: 'Запасные победители', key: "reserveWinners", type: "number" }
         ],
@@ -153,7 +151,6 @@ export default {
             this.modalConfig.show = false
             this.items.push(r.data)
           })
-          .catch(er => alert('Недостаточно свободных чеков для проведения розыгрыша'))
       } else if (this.modalConfig.data.type == 'editLottery') {
         const status_id = this.modalConfig.data.fields[0].value
         this.$http({ method: 'PUT', url: `/v1/lottery/${this.modalConfig.data.cur.id}`, data: { status: status_id } })
@@ -195,18 +192,17 @@ export default {
       this.modalConfig.show = true
     },
     getCurrentItems(items = this.items) {
-      //FIXME:
-      // const cols = 'Id Розыгрыша,Дата,Приз,Основной,Подтвержден,Уведомлен,Id чека,Имя,Номер,Город'
-      // const csvCode = 'data:text/csv;charset=utf-8,'+ cols + '%0A' + encodeURIComponent(
-      //   items.reduce((sum,cur)=>{
-      //     const header = `${cur.id},${new Date(cur.createdAt).toLocaleString().replace(',','')},${cur.prize.ru},${cur.primary?'Да':'Нет'},${cur.confirmed?'Да':'Нет'},${cur.notified?'Да':'Нет'}`
-      //     cur.winners.forEach(w=>{
-      //       sum = sum + header + `,${w.check.fancyId},${w.check.user.credentials},${w.check.user.phone},${this.$ctable.CITY.find(c=>c.value == w.check.user.cityId).label}\n`
-      //     })
-      //     return sum
-      //   },'')
-      // )
-      // return csvCode
+      const cols = 'Id Розыгрыша,Дата,Приз,Основной,Подтвержден,Уведомлен,Id чека,Имя,Номер,Город'
+      const csvCode = 'data:text/csv;charset=utf-8,' + cols + '%0A' + encodeURIComponent(
+        items.reduce((sum, cur) => {
+          const header = `${cur.id},${cur.createdAt},${cur.prize},${cur.primary ? 'Да' : 'Нет'},${cur.confirmed ? 'Да' : 'Нет'},${cur.notified ? 'Да' : 'Нет'}`
+          cur.winners.forEach(w => {
+            sum = sum + header + `,${w.fancyId},${w.credentials},${w.phone},${w.city}\n`
+          })
+          return sum
+        }, '')
+      )
+      return csvCode
     },
   },
   computed: {

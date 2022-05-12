@@ -1,4 +1,5 @@
 import 'core-js/stable';
+// import 'ag-grid-enterprise';
 import Vue from 'vue';
 import CoreuiVuePro from '@coreui/vue-pro/src/index.js';
 import App from './App';
@@ -17,6 +18,8 @@ Vue.prototype.$http.interceptors.response.use(
   function (error) {
     if (error.response.status == 401 && error.response.config.url !== '/auth/login') {
       router.push('login');
+    } else {
+      alert(error.response.data.message);
     }
     return Promise.reject(error);
   },

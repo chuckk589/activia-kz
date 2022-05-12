@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CheckStatus } from '../mikroorm/entities/CheckStatus';
 import { City } from '../mikroorm/entities/City';
 import { LotteryStatus } from '../mikroorm/entities/LotteryStatus';
+import { Prize } from '../mikroorm/entities/Prize';
 import { Promo } from '../mikroorm/entities/Promo';
 import { Locale, UserRole } from '../mikroorm/entities/User';
 import { RetrieveStatusDto } from './dto/retrieve-status.dto';
@@ -15,6 +16,7 @@ export class StatusService {
     const promos = await this.em.find(Promo, {}, { populate: ['translation.values'] });
     const check_s = await this.em.find(CheckStatus, {}, { populate: ['translation.values', 'comment.values'] });
     const lottery_s = await this.em.find(LotteryStatus, {}, { populate: ['translation.values'] });
+    const prizes = await this.em.find(Prize, {}, { populate: ['translation.values'] });
     return {
       cities: cities.map((city) => new RetrieveStatusDto(city)),
       promotions: promos.map((promo) => new RetrieveStatusDto(promo)),
@@ -26,6 +28,7 @@ export class StatusService {
       roles: Object.values(UserRole).map(
         (role) => new RetrieveStatusDto({ value: role, label: role == 'user' ? 'Пользователь' : 'Администратор' }),
       ),
+      prizes: prizes.map((prize) => new RetrieveStatusDto(prize)),
     };
   }
 }

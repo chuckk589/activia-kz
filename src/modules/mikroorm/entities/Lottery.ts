@@ -1,6 +1,17 @@
-import { Cascade, Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import {
+  BeforeCreate,
+  Cascade,
+  Collection,
+  Entity,
+  EventArgs,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+  Unique,
+} from '@mikro-orm/core';
 import { CustomBaseEntity } from './CustomBaseEntity';
-import { LotteryStatus } from './LotteryStatus';
+import { LotteryState, LotteryStatus } from './LotteryStatus';
 import { Prize } from './Prize';
 import { Locale } from './User';
 import { Winner } from './Winner';
@@ -31,7 +42,13 @@ export class Lottery extends CustomBaseEntity {
 
   @OneToMany(() => Winner, (winner) => winner.lottery, { orphanRemoval: true })
   winners = new Collection<Winner>(this);
-  //TODO: automatic status on create
+
+  @BeforeCreate()
+  async beforeCreate(args: EventArgs<Lottery>): Promise<void> {
+    if (!this.status) {
+      this.status = await args.em.findOne(LotteryStatus, { name: LotteryState.PENDING });
+    }
+  }
 }
 export class BotLotteryDto {
   constructor(lottery: Lottery, locale: Locale) {

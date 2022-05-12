@@ -2,14 +2,15 @@ import { Composer, Context, FilterQuery } from 'grammy';
 import { LISTENERS_METADATA } from 'src/constants';
 import { match } from 'src/modules/bot/common/helpers';
 import { BotContext } from 'src/types/interfaces';
-import { Menu as MenuGrammy } from '@grammyjs/menu';
 
 class BotListenerMetadata {
-  constructor(method: ComposerMethod, payload: any, key: string) {
+  constructor(method: ComposerMethod, payload: any, key: string, parent?: string) {
     this.method = method;
     this.payload = method == ComposerMethod.hears ? match(payload) : payload;
     this.key = String(key);
+    this.parent = parent;
   }
+  parent: string | undefined;
   method: ComposerMethod;
   payload: string | RegExp;
   key: string;
@@ -21,12 +22,12 @@ enum ComposerMethod {
   on = 'on',
   use = 'use',
   hears = 'hears',
-  text = 'text',
-  menu = 'menu',
-  back = 'back',
+  // text = 'text',
+  // menu = 'menu',
+  // back = 'back',
   filter = 'filter',
-  dynamic = 'dynamic',
-  menuText = 'menuText',
+  // dynamic = 'dynamic',
+  // menuText = 'menuText',
 }
 
 export type MenuKeyFunction = (ctx: BotContext) => { keys: string[] };
@@ -37,7 +38,13 @@ export function ComposerController<T extends { new (...args: any[]): any }>(cons
     _composer = fn(() => {
       const composer = new Composer();
       const handlers: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, constructor.prototype);
+      //TODO: bind?
       const that = <any>this;
+      // handlers = handlers.filter((handler) =>
+      //   handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true,
+      // );
+      //TODO: make children work for all methods
+      //console.log(handlers);
       handlers.map((handler) => {
         switch (handler.method) {
           case ComposerMethod.on: {
@@ -48,7 +55,6 @@ export function ComposerController<T extends { new (...args: any[]): any }>(cons
             composer.command(handler.payload as FilterQuery, that[handler.key]);
             break;
           }
-          case ComposerMethod.menu:
           case ComposerMethod.use: {
             composer.use(that[handler.key]);
             break;
@@ -59,6 +65,7 @@ export function ComposerController<T extends { new (...args: any[]): any }>(cons
           }
           case ComposerMethod.filter: {
             composer.filter(that[handler.key]);
+
             break;
           }
           // case ComposerMethod.dynamic: {
@@ -88,9 +95,9 @@ export function ComposerController<T extends { new (...args: any[]): any }>(cons
 }
 
 function createListenerDecorator<T>(method: ComposerMethod) {
-  return (payload?: T): PropertyDecorator => {
+  return (payload?: T, parent?: string): PropertyDecorator => {
     return (_target: any, _key?: string) => {
-      const metadata: BotListenerMetadata[] = [new BotListenerMetadata(method, payload, _key)];
+      const metadata: BotListenerMetadata[] = [new BotListenerMetadata(method, payload, _key, parent)];
       const previousValue = Reflect.getMetadata(LISTENERS_METADATA, _target) || [];
       const value = [...previousValue, ...metadata];
       Reflect.defineMetadata(LISTENERS_METADATA, value, _target);
@@ -98,22 +105,22 @@ function createListenerDecorator<T>(method: ComposerMethod) {
   };
 }
 
-function createMenuListenerDecorator(method: ComposerMethod) {
-  return (owningMenu: string, resolveKey: string): PropertyDecorator => {
-    return (_target: any, _key?: any) => {
-      const previousValue: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, _target);
-      const parent: BotListenerMetadata = previousValue.find((r) => r.payload == owningMenu);
-      if (!parent) throw new Error('Parent menu doesnt exists');
-      parent.children.push(new BotListenerMetadata(method, resolveKey, _key));
-    };
-  };
-}
+// function createMenuListenerDecorator(method: ComposerMethod) {
+//   return (owningMenu: string, resolveKey: string): PropertyDecorator => {
+//     return (_target: any, _key?: any) => {
+//       const previousValue: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, _target);
+//       const parent: BotListenerMetadata = previousValue.find((r) => r.payload == owningMenu);
+//       if (!parent) throw new Error('Parent menu doesnt exists');
+//       parent.children.push(new BotListenerMetadata(method, resolveKey, _key));
+//     };
+//   };
+// }
 export const Use = createListenerDecorator(ComposerMethod.use);
 export const Command = createListenerDecorator<string>(ComposerMethod.command);
-export const Menu = createListenerDecorator<string>(ComposerMethod.menu);
-export const DynamicMenu = createListenerDecorator<string>(ComposerMethod.dynamic);
+// export const Menu = createListenerDecorator<string>(ComposerMethod.menu);
+// export const DynamicMenu = createListenerDecorator<string>(ComposerMethod.dynamic);
 export const On = createListenerDecorator<FilterQuery | FilterQuery[]>(ComposerMethod.on);
 export const Filter = createListenerDecorator(ComposerMethod.filter);
 export const Hears = createListenerDecorator(ComposerMethod.hears);
 
-export const Text = createMenuListenerDecorator(ComposerMethod.menuText);
+// export const Text = createMenuListenerDecorator(ComposerMethod.menuText);

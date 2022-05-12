@@ -4,6 +4,6 @@ import { LotteryController } from './lottery.controller';
 
 @Module({
   controllers: [LotteryController],
-  providers: [LotteryService]
+  providers: [LotteryService],
 })
 export class LotteryModule {}

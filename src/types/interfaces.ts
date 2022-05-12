@@ -54,12 +54,25 @@ export class BotContext extends Context implements SessionFlavor<Session>, I18nC
 }
 
 export interface Session {
+  bulkId: number;
   menuId: number;
   step: BotStep;
   isRegistered: boolean;
   winners: BotLotteryDto[];
 }
-
+export class adminCommand {
+  constructor(payload: string) {
+    const data = payload.split(' ');
+    if (['access', 'forward'].includes(data[0])) {
+      this.action = data[0] as 'access' | 'forward';
+      this.payload = data[1];
+    } else {
+      throw new Error('invalidPayload');
+    }
+  }
+  action: 'access' | 'forward';
+  payload: string;
+}
 export class TranslatableConfig {
   constructor(payload: Promo | City) {
     this.id = payload.id;

@@ -34,7 +34,9 @@ export const prizeMessage = (ctx: BotContext, lotteries: Lottery[]): string => {
   }, ctx.i18n.t('myPrizes'));
   return message;
 };
-
+export const winnersMessage = (ctx: BotContext): string => {
+  return ctx.session.winners.length ? ctx.i18n.t('winners') : ctx.i18n.t('noWinnersYet');
+};
 export const prizeMessageWeek = (ctx: BotContext, week: number): string => {
   if (!ctx.session.winners.length) return ctx.i18n.t('noWinnersYet');
   return ctx.session.winners
@@ -46,4 +48,15 @@ export const prizeMessageWeek = (ctx: BotContext, week: number): string => {
       });
       return s;
     }, ctx.i18n.t('winners'));
+};
+
+export const getRandomArrayValues = <T>(arr: T[], count: number): T[] => {
+  const shuffled = arr.slice(0);
+  const result = [];
+  while (result.length < count) {
+    const random = Math.floor(Math.random() * shuffled.length);
+    result.push(shuffled[random]);
+    shuffled.splice(random, 1);
+  }
+  return result;
 };

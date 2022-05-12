@@ -14,7 +14,7 @@ export class LotteryController {
 
   @Post()
   create(@Body() createLotteryDto: CreateLotteryDto) {
-    // return this.lotteryService.create(createLotteryDto);
+    return this.lotteryService.create(createLotteryDto);
   }
 
   @Get()

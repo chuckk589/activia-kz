@@ -5,17 +5,24 @@ import {
   cilMoon,
   cilSpeedometer,
   cilSun,
-  cilImage
-} from '@coreui/icons'
-import { logo } from './logo'
-
-export const iconsSet = Object.assign({}, {
-  cilApplicationsSettings,
-  cilDrop,
-  cilPuzzle,
-  cilMoon,
-  cilSpeedometer,
-  cilSun,
   cilImage,
-  logo
-})
+  cilPencil,
+  cilX,
+} from '@coreui/icons';
+import { logo } from './logo';
+
+export const iconsSet = Object.assign(
+  {},
+  {
+    cilApplicationsSettings,
+    cilDrop,
+    cilPuzzle,
+    cilMoon,
+    cilSpeedometer,
+    cilSun,
+    cilImage,
+    cilPencil,
+    logo,
+    cilX,
+  },
+);

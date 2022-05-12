@@ -15,6 +15,11 @@ import { LotteryState } from 'src/modules/mikroorm/entities/LotteryStatus';
 
 @Injectable()
 export class AccountService {
+  constructor(
+    private readonly em: EntityManager,
+    private readonly AppConfigService: AppConfigService,
+    @InjectPinoLogger('AccountService') private readonly logger: PinoLogger,
+  ) {}
   async getLotteries(ctx: BotContext): Promise<BotLotteryDto[]> {
     const lotteries = await this.em.find(
       Lottery,
@@ -29,7 +34,7 @@ export class AccountService {
     );
     return lotteries.map((l) => new BotLotteryDto(l, ctx.i18n.locale() as Locale));
   }
-  async getUserLotteries(ctx: BotContext): Promise<string> {
+  async getUserLotteries(ctx: BotContext): Promise<Lottery[]> {
     const lotteries = await this.em.find(
       Lottery,
       {
@@ -41,7 +46,7 @@ export class AccountService {
       },
       { populate: ['prize.translation', 'winners.check'] },
     );
-    return prizeMessage(ctx, lotteries);
+    return lotteries;
   }
   async getUserChecks(ctx: BotContext): Promise<string> {
     const checks = await this.em.find(
@@ -68,11 +73,6 @@ export class AccountService {
       }
     }
   }
-  constructor(
-    private readonly em: EntityManager,
-    private readonly AppConfigService: AppConfigService,
-    @InjectPinoLogger('AccountService') private readonly logger: PinoLogger,
-  ) {}
   downloadFile(ctx: BotContext): Promise<string> {
     return new Promise((res, rej) => {
       ctx

@@ -16,3 +16,20 @@ export const mainKeyboard = (ctx: BotContext): Keyboard => {
     .row()
     .text(ctx.i18n.t('contactUs'));
 };
+
+//inline
+// export const languageMenu = (ctx: BotContext): InlineKeyboardMarkup => {
+//   return {
+//     inline_keyboard: [
+//       [
+//         { callback_data: 'lang:::ru', text: ctx.i18n.t('ru') },
+//         { callback_data: 'lang:::en', text: ctx.i18n.t('en') },
+//       ],
+//     ],
+//   };
+// };
+// exports.forwardGroup = (ctx) => {
+//   return Markup.inlineKeyboard([
+//       [Markup.callbackButton('Начать рассылку', 'approveForward'), Markup.callbackButton('Отмена', 'rejectForward')]
+//   ]).extra()
+// }

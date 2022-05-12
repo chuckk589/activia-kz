@@ -3,7 +3,7 @@ import { ComposerController, Filter, Hears, On, Use } from '../common/decorators
 import { AccountService } from './account.service';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Menu } from '@grammyjs/menu';
-import { label, prizeMessageWeek } from '../common/helpers';
+import { label, prizeMessage, prizeMessageWeek, winnersMessage } from '../common/helpers';
 
 @ComposerController
 export class AccountComposer extends BaseComposer {
@@ -14,7 +14,7 @@ export class AccountComposer extends BaseComposer {
   @Filter()
   filter = async (ctx: BotContext) => await this.accountService.isRegistered(ctx);
 
-  @Use()
+  @Use(undefined, 'filter')
   menu = new Menu<BotContext>('winner-menu').dynamic((ctx, range) => {
     const weeks = Array.from(new Set(ctx.session.winners.map((winner) => winner.week)));
     weeks.map((week, idx) => {
@@ -24,46 +24,46 @@ export class AccountComposer extends BaseComposer {
     });
   });
 
-  @Hears('takePart')
+  @Hears('takePart', 'filter')
   takePart = async (ctx: BotContext) => {
     await ctx.reply(ctx.i18n.t('takePart'));
   };
 
-  @Hears('about')
+  @Hears('about', 'filter')
   about = async (ctx: BotContext) => {
     await ctx.reply(ctx.i18n.t('about'));
   };
 
-  @Hears('contactUs')
+  @Hears('contactUs', 'filter')
   contactUs = async (ctx: BotContext) => {
     await ctx.reply(ctx.i18n.t('contactUs'));
   };
 
-  @Hears('myChecks')
+  @Hears('myChecks', 'filter')
   myChecks = async (ctx: BotContext) => {
     const message = await this.accountService.getUserChecks(ctx);
     await ctx.reply(message);
   };
 
-  @Hears('myPrizes')
+  @Hears('myPrizes', 'filter')
   myPrizes = async (ctx: BotContext) => {
-    const message = await this.accountService.getUserLotteries(ctx);
-    await ctx.reply(message);
+    const lotteries = await this.accountService.getUserLotteries(ctx);
+    await ctx.reply(prizeMessage(ctx, lotteries));
   };
 
-  @Hears('winners')
+  @Hears('winners', 'filter')
   winners = async (ctx: BotContext) => {
     ctx.session.winners = await this.accountService.getLotteries(ctx);
-    await ctx.cleanReplySave(ctx.i18n.t('winners'), { reply_markup: this.menu });
+    await ctx.cleanReplySave(winnersMessage(ctx), { reply_markup: this.menu });
   };
 
-  @Hears('rules')
+  @Hears('rules', 'filter')
   rules = async (ctx: BotContext) => {
     const url = this.AppConfigService.get('url');
     await ctx.reply(ctx.i18n.t('get-rules', { link: url + '/public/files/rules.pdf' }), { parse_mode: 'HTML' });
   };
 
-  @On(':photo')
+  @On(':photo', 'filter')
   photo = async (ctx: BotContext) => {
     const path = await this.accountService.downloadFile(ctx);
     const check = await this.accountService.registerCheck(ctx.from.id, path);

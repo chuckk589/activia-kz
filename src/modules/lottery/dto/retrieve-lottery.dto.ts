@@ -34,10 +34,12 @@ class RetrieveWinnerDto {
     this.phone = winner.check.user.phone;
     this.city = winner.check.user.city.translation.getLocalizedLabel(Locale.RU);
     this.checkPath = winner.check.path;
+    this.primary = winner.primary;
   }
   id: number;
   confirmed: boolean;
   notified: boolean;
+  primary: boolean;
   fancyId: string;
   credentials: string;
   phone: string;

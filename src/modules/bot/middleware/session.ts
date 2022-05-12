@@ -4,9 +4,10 @@ import { Session, BotContext } from 'src/types/interfaces';
 
 const initial = (): Session => ({
   menuId: undefined,
+  bulkId: undefined,
   step: BotStep.default,
   isRegistered: undefined,
-  winners: undefined,
+  winners: [],
 });
 
 function getSessionKey(ctx: BotContext): string | undefined {

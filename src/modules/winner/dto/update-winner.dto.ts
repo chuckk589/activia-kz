@@ -1,6 +1,6 @@
 import { IsNumberString } from 'class-validator';
 
-export class UpdateCheckDto {
+export class UpdateWinnerDto {
   @IsNumberString()
-  status: string;
+  confirmed: string;
 }

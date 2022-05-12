@@ -21,6 +21,8 @@ import { LotteryModule } from './modules/lottery/lottery.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { StatusModule } from './modules/status/status.module';
+import { WinnerModule } from './modules/winner/winner.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
@@ -59,6 +61,8 @@ import { StatusModule } from './modules/status/status.module';
     CheckModule,
     AuthModule,
     StatusModule,
+    WinnerModule,
+    TelegramModule,
   ],
   controllers: [],
   providers: [],
