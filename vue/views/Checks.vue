@@ -2,7 +2,7 @@
   <div>
     <CExtendedModal @modal-closed="closeModalHandler()" :vis="modalConfig.show" :mData="modalConfig.data">
       <template #content>
-        <CImg fluidGrow :src="modalConfig.data.cur.path"></CImg>
+        <CImg fluidGrow :src="modalConfig.data.cur.checkPath"></CImg>
       </template>
     </CExtendedModal>
     <CDataTable :items="items" :fields="fields" pagination sorter itemsPerPageSelect column-filter>

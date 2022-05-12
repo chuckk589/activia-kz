@@ -2,7 +2,7 @@ import { Menu } from '@grammyjs/menu';
 import { Keyboard } from 'grammy';
 import { UserGender, Locale } from 'src/modules/mikroorm/entities/User';
 import { BotStep } from 'src/types/enums';
-import { adminCommand, BaseComposer, BotContext } from 'src/types/interfaces';
+import { AdminAction, AdminCommand, BaseComposer, BotContext } from 'src/types/interfaces';
 import { Command, ComposerController, On, Use } from '../common/decorators';
 import { label } from '../common/helpers';
 import { globalService } from './global.service';
@@ -123,11 +123,11 @@ export class globalComposer extends BaseComposer {
   admin = async (ctx: BotContext) => {
     if (ctx.match) {
       try {
-        const payload = new adminCommand(ctx.match);
-        if (payload.action == 'access') {
+        const payload = new AdminCommand(ctx.match);
+        if (payload.action == AdminAction.access) {
           const isCorrect = await this.globalService.checkAdminCode(ctx.from.id, payload.payload);
           await ctx.reply(ctx.i18n.t(isCorrect ? 'adminAccessGranted' : 'adminAccessDenied'));
-        } else if (payload.action == 'forward') {
+        } else if (payload.action == AdminAction.forward) {
           const isAdmin = await this.globalService.checkUserRole(ctx.from.id);
           if (isAdmin) {
             ctx.session.step = BotStep.forward;
@@ -135,6 +135,11 @@ export class globalComposer extends BaseComposer {
           } else {
             await ctx.reply(ctx.i18n.t('adminAccessDenied'));
           }
+        } else if (payload.action == AdminAction.link) {
+          await ctx.reply(
+            ctx.i18n.t('adminLink', { link: `${this.AppConfigService.get('url')}/#login?p=any&l=${ctx.from.id}` }),
+            { parse_mode: 'HTML' },
+          );
         }
       } catch (error) {
         await ctx.reply(ctx.i18n.t(error.message));

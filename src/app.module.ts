@@ -33,9 +33,9 @@ import { TelegramModule } from './telegram/telegram.module';
         return {
           type: 'mysql',
           allowGlobalContext: true,
-          debug: true,
-          logger: console.log.bind(console),
-          entities: ['./dist/src/modules/mikroorm/entities/'],
+          // debug: true,
+          // logger: console.log.bind(console),
+          entities: ['./dist/modules/mikroorm/entities/'],
           entitiesTs: ['./src/modules/mikroorm/entities/'],
           clientUrl: configService.get('database', { infer: true }),
         };
@@ -55,7 +55,7 @@ import { TelegramModule } from './telegram/telegram.module';
       },
     }),
     LoggerModule.forRoot(),
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, './', 'public') }),
     UserModule,
     LotteryModule,
     CheckModule,

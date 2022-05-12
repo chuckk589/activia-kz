@@ -16,10 +16,11 @@ Vue.prototype.$http.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status == 401 && error.response.config.url !== '/auth/login') {
-      router.push('login');
-    } else {
+    if (error.response.config.url !== '/auth/login') {
       alert(error.response.data.message);
+      if (error.response.status == 401) {
+        router.push('login');
+      }
     }
     return Promise.reject(error);
   },

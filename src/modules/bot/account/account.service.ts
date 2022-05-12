@@ -84,12 +84,12 @@ export class AccountService {
             method: 'GET',
             responseType: 'stream',
           }).then((response) => {
-            const uploaddir = `/public/files/${ctx.from.id}`;
+            const uploaddir = `/files/${ctx.from.id}`;
             const filename = `${Date.now()}.${file.file_path.split('.').pop()}`;
-            if (!fs.existsSync(`.${uploaddir}`)) {
-              fs.mkdirSync(`.${uploaddir}`, { recursive: true });
+            if (!fs.existsSync(`./dist/public${uploaddir}`)) {
+              fs.mkdirSync(`./dist/public${uploaddir}`, { recursive: true });
             }
-            const photo = fs.createWriteStream(`.${uploaddir}/${filename}`);
+            const photo = fs.createWriteStream(`./dist/public${uploaddir}/${filename}`);
             response.data.pipe(photo).on('finish', function () {
               res(`${uploaddir}/${filename}`);
             });

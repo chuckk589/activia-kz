@@ -60,18 +60,23 @@ export interface Session {
   isRegistered: boolean;
   winners: BotLotteryDto[];
 }
-export class adminCommand {
+export class AdminCommand {
   constructor(payload: string) {
     const data = payload.split(' ');
-    if (['access', 'forward'].includes(data[0])) {
-      this.action = data[0] as 'access' | 'forward';
+    if (data[0] in AdminAction) {
+      this.action = data[0] as AdminAction;
       this.payload = data[1];
     } else {
       throw new Error('invalidPayload');
     }
   }
-  action: 'access' | 'forward';
+  action: AdminAction;
   payload: string;
+}
+export enum AdminAction {
+  access = 'access',
+  forward = 'forward',
+  link = 'link',
 }
 export class TranslatableConfig {
   constructor(payload: Promo | City) {

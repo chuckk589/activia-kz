@@ -3,6 +3,7 @@ import { LotteryService } from './lottery.service';
 import { CreateLotteryDto } from './dto/create-lottery.dto';
 import { UpdateLotteryDto } from './dto/update-lottery.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RetrieveLotteryDto } from './dto/retrieve-lottery.dto';
 
 @Controller({
   path: 'lottery',
@@ -13,8 +14,8 @@ export class LotteryController {
   constructor(private readonly lotteryService: LotteryService) {}
 
   @Post()
-  create(@Body() createLotteryDto: CreateLotteryDto) {
-    return this.lotteryService.create(createLotteryDto);
+  async create(@Body() createLotteryDto: CreateLotteryDto): Promise<RetrieveLotteryDto> {
+    return await this.lotteryService.create(createLotteryDto);
   }
 
   @Get()

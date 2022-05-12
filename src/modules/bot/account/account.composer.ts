@@ -60,7 +60,7 @@ export class AccountComposer extends BaseComposer {
   @Hears('rules', 'filter')
   rules = async (ctx: BotContext) => {
     const url = this.AppConfigService.get('url');
-    await ctx.reply(ctx.i18n.t('get-rules', { link: url + '/public/files/rules.pdf' }), { parse_mode: 'HTML' });
+    await ctx.reply(ctx.i18n.t('get-rules', { link: url + '/files/rules.pdf' }), { parse_mode: 'HTML' });
   };
 
   @On(':photo', 'filter')

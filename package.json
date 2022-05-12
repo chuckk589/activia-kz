@@ -12,18 +12,12 @@
   "scripts": {
     "serve": "vue-cli-service serve vue/main.js",
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "vue-cli-service build vue/main.js && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "SET NODE_ENV=development&& nodemon src/main.ts",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "start:prod": "node dist/main.js",
+    "start:debug": "NODE_ENV=debug node dist/index.js | pino-pretty"
   },
   "dependencies": {
     "@grammyjs/i18n": "^0.5.1",
@@ -40,10 +34,6 @@
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
-    "@types/crypto-js": "^4.1.1",
-    "ag-grid-community": "^27.2.1",
-    "ag-grid-enterprise": "^27.2.1",
-    "ag-grid-vue": "^27.2.1",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",

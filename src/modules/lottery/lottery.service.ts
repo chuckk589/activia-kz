@@ -1,5 +1,6 @@
-import { EntityManager } from '@mikro-orm/core';
+import { EntityManager, wrap } from '@mikro-orm/core';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
 import { getRandomArrayValues } from '../bot/common/helpers';
 import { Check } from '../mikroorm/entities/Check';
 import { CheckState } from '../mikroorm/entities/CheckStatus';
@@ -14,7 +15,7 @@ import { UpdateLotteryDto } from './dto/update-lottery.dto';
 @Injectable()
 export class LotteryService {
   constructor(private readonly em: EntityManager) {}
-  async create(createLotteryDto: CreateLotteryDto) {
+  async create(createLotteryDto: CreateLotteryDto): Promise<RetrieveLotteryDto> {
     const requestedPrize = await this.em.findOne(Prize, { id: Number(createLotteryDto.prize) });
     const where = {
       ...(requestedPrize.name == 'PRIZE_WEEKLY'
@@ -53,7 +54,13 @@ export class LotteryService {
         }),
       ),
     });
-    return await this.em.persistAndFlush(lottery);
+    await this.em.persistAndFlush(lottery);
+    await wrap(lottery).init(true, [
+      'status.translation.values',
+      'prize.translation.values',
+      'winners.check.user.city.translation.values',
+    ]);
+    return new RetrieveLotteryDto(lottery);
   }
 
   async findAll(): Promise<RetrieveLotteryDto[]> {
