@@ -34,13 +34,13 @@ import { MySqlDriver } from '@mikro-orm/mysql/MySqlDriver';
         return {
           type: 'mysql',
           allowGlobalContext: true,
-          ...(configService.get('node_env') === 'production'
-            ? {
+          ...(configService.get('node_env') === 'development'
+            ? { debug: true, logger: console.log.bind(console) }
+            : {
                 driverOptions: {
                   connection: { socketPath: '/var/lib/mysql/mysql.sock' },
                 },
-              }
-            : { debug: true, logger: console.log.bind(console) }),
+              }),
           entities: ['./dist/modules/mikroorm/entities/'],
           entitiesTs: ['./src/modules/mikroorm/entities/'],
           clientUrl: configService.get('database', { infer: true }),
