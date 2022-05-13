@@ -69,12 +69,12 @@ export function ComposerController<T extends { new (...args: any[]): any }>(cons
     // _composer = fn(() => {
     //   const composer = new Composer();
     //   const handlers: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, constructor.prototype);
-    //   //TODO: bind?
+
     //   const that = <any>this;
     // handlers = handlers.filter((handler) =>
     //   handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true,
     // );
-    // TODO: make children work for all methods
+
     //   //console.log(handlers);
     //   handlers.map((handler) => {
     //     switch (handler.method) {

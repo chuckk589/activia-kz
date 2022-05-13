@@ -10,7 +10,6 @@ export class AccountComposer extends BaseComposer {
   constructor(private readonly accountService: AccountService, private readonly AppConfigService: AppConfigService) {
     super();
   }
-  //FIXME: make nested
   @Filter()
   filter = async (ctx: BotContext) => {
     const isRegistered = await this.accountService.isRegistered(ctx);

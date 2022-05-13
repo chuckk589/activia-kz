@@ -8,12 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly em: EntityManager) {
-    //TODO: clean
-    // this.em
-    //   .find(User, {}, { populate: ['promo.translation.values', 'city.translation.values'] })
-    //   .then((users) => console.log(users.map((user) => new RetrieveUserDto(user))));
-  }
+  constructor(private readonly em: EntityManager) {}
 
   async findAll(): Promise<RetrieveUserDto[]> {
     const users = await this.em.find(User, {}, { populate: ['promo.translation.values', 'city.translation.values'] });

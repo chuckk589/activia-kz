@@ -20,6 +20,8 @@
     "REJECT_REASON_1": "Твой чек по уникальному номеру: ${check_id} не принят. REJECT_REASON_1",
     "REJECT_REASON_2": "Твой чек по уникальному номеру: ${check_id} не принят. REJECT_REASON_2",
     "REJECT_REASON_3": "Твой чек по уникальному номеру: ${check_id} не принят. REJECT_REASON_3",
+    "REJECT_REASON_4": "Твой чек по уникальному номеру: ${check_id} не принят. REJECT_REASON_4",
+    "REJECT_REASON_5": "Твой чек по уникальному номеру: ${check_id} не принят. REJECT_REASON_5",
     "adminAskMessage": "Сформируйте и отправьте сообщение для рассылки",
     "adminHelp": "/admin access 123456, где 123456 - пароль администратора\n/admin forward - запустить рассылку, требуется права администратора\n/admin link - ссылка на личный кабинет",
     "invalidPayload": "invalidPayload",
@@ -49,3 +51,5 @@
     "registered": "Поздравляем с успешной регистрацией! Чтобы принять участие в акции загрузите фото чека!",
     "checkForwardMessage": "Сообщение сохранено, так оно будет выглядеть при пересылке пользователям, проверьте все ли верно и запустите рассылку"
 }
+                                                                                                                                                                                                                                                                                                                                                                                                 * Do'kon sotuvchisidan		
+                                                                                                                                     

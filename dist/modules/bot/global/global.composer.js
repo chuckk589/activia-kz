@@ -111,7 +111,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
         this.start = async (ctx) => {
             ctx.session.step = enums_1.BotStep.default;
             const user = await this.globalService.getUser(ctx);
-            ctx.session.isRegistered = user.registered;
+            ctx.session.isRegistered = false;
             ctx.i18n.locale(user.locale);
             ctx.session.isRegistered
                 ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) })
