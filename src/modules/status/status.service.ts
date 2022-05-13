@@ -9,14 +9,17 @@ import { Locale, UserRole } from '../mikroorm/entities/User';
 import { RetrieveStatusDto } from './dto/retrieve-status.dto';
 import fs from 'fs';
 import { UpdateLocaleDto } from './dto/update-locale.dto';
+import i18n from '../bot/middleware/i18n';
 
 @Injectable()
 export class StatusService {
   updateLocales(updateLocaleDto: UpdateLocaleDto) {
+    const existingLocale = updateLocaleDto.ru ? 'ru' : 'uz';
     fs.writeFileSync(
-      `./dist/modules/bot/locales/${updateLocaleDto.ru ? 'ru' : 'uz'}.json`,
-      JSON.stringify(updateLocaleDto.ru || updateLocaleDto.uz),
+      `./dist/modules/bot/locales/${existingLocale}.json`,
+      JSON.stringify(updateLocaleDto[existingLocale]),
     );
+    i18n.loadLocale(existingLocale, updateLocaleDto[existingLocale]);
   }
   async findLocales(): Promise<{ [key: string]: { [key: string]: string } }> {
     return {
