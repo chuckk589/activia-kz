@@ -10,14 +10,15 @@ export class RetrieveCheckDto {
     this.city = check.user.city.translation.getLocalizedLabel(Locale.RU);
     this.checkPath = check.path;
     this.createdAt = check.createdAt.toLocaleString();
-    this.status = check.status.translation.getLocalizedLabel(Locale.RU);
+    //this.status = check.status.translation.getLocalizedLabel(Locale.RU);
+    this.status = check.status.id;
   }
   id: number;
   fancyId: string;
   credentials: string;
   phone: string;
   city: string;
-  status: string;
+  status: number;
   createdAt: string;
   checkPath: string;
 }

@@ -17,8 +17,8 @@
         <CLink class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
       </template>
-      <template #createdAt="{ item }">
-        <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
+      <template #status="{ item }">
+        <td>{{ $ctable.check_statuses.find(e => e.value == item.status).label }}</td>
       </template>
     </CDataTable>
   </div>
@@ -66,14 +66,11 @@ export default {
     }
   },
   methods: {
-    isCheckBeingRejected(value) {
-      return value.includes('REJECTED')
-    },
     viewCheck(item) {
       this.modalConfig.data = {
         cur: item,
         fields: [
-          { label: 'status', label: 'Статус', key: "status", select: this.$ctable.check_statuses, value: this.$ctable.check_statuses.find(c => c.label == item.status).value },
+          { label: 'status', label: 'Статус', key: "status", select: this.$ctable.check_statuses, value: item.status },
         ],
         footer: 'Сохранить',
         header: 'Просмотр чека',
@@ -92,7 +89,8 @@ export default {
           }
         })
           .then(() => {
-            this.modalConfig.data.cur.status = this.$ctable.check_statuses.find(c => c.value == status_id).label
+            this.modalConfig.data.cur.status = status_id
+            //this.modalConfig.data.cur.status = this.$ctable.check_statuses.find(c => c.value == status_id).label
           })
       }
     },

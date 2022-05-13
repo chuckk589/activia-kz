@@ -11,7 +11,7 @@ class RetrieveCheckDto {
         this.city = check.user.city.translation.getLocalizedLabel(User_1.Locale.RU);
         this.checkPath = check.path;
         this.createdAt = check.createdAt.toLocaleString();
-        this.status = check.status.translation.getLocalizedLabel(User_1.Locale.RU);
+        this.status = check.status.id;
     }
 }
 exports.RetrieveCheckDto = RetrieveCheckDto;

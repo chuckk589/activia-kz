@@ -33,7 +33,6 @@ enum ComposerMethod {
 export type MenuKeyFunction = (ctx: BotContext) => { keys: string[] };
 
 function concatChildren(children: BotListenerMetadata[], parent: Composer<BotContext>) {
-  console.log('concatChildren', parent);
   children.forEach((child) => {
     const pm = applyComposerMethod.call(this, child, parent);
     if (child.children.length) {

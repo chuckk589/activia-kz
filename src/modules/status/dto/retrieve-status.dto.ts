@@ -9,7 +9,12 @@ export class RetrieveStatusDto {
   constructor(
     payload: Promo | City | Prize | LotteryStatus | CheckStatus | { id?: number; label?: string; value: string },
   ) {
-    this.label = 'translation' in payload ? payload.translation.getLocalizedLabel(Locale.RU) : payload.label;
+    this.label =
+      'comment' in payload && payload.comment
+        ? payload.comment?.getLocalizedLabel(Locale.RU)
+        : 'translation' in payload
+        ? payload.translation.getLocalizedLabel(Locale.RU)
+        : payload.label;
     this.comment = 'comment' in payload ? payload.comment?.getLocalizedLabel(Locale.RU) : null;
     this.value = 'id' in payload ? payload.id.toString() : payload.value;
   }

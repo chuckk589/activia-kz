@@ -22,7 +22,6 @@ var ComposerMethod;
     ComposerMethod["filter"] = "filter";
 })(ComposerMethod || (ComposerMethod = {}));
 function concatChildren(children, parent) {
-    console.log('concatChildren', parent);
     children.forEach((child) => {
         const pm = applyComposerMethod.call(this, child, parent);
         if (child.children.length) {
