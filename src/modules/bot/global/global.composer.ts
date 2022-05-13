@@ -58,25 +58,26 @@ export class globalComposer extends BaseComposer {
         break;
       }
       case BotStep.city: {
-        this.AppConfigService.cities.map((city) =>
+        this.AppConfigService.cities.map((city, index) => {
           range.text(label({ text: city.translation[locale] }), async (ctx) => {
             ctx.session.step = BotStep.promo;
             await this.globalService.updateCity(ctx.from.id, city.id);
-            //await ctx.editMessageText(ctx.i18n.t('askPromo'));
             await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
           }),
-        );
+            index % 3 === 0 && range.row();
+        });
         break;
       }
       case BotStep.promo: {
-        this.AppConfigService.promos.map((promo) =>
+        this.AppConfigService.promos.map((promo, index) => {
           range.text(label({ text: promo.translation[locale] }), async (ctx) => {
             await this.globalService.updatePromo(ctx.from.id, promo.id);
             ctx.session.step = BotStep.name;
             ctx.menu.close();
             await ctx.reply(ctx.i18n.t('askName'));
-          }),
-        );
+          });
+          index % 2 === 0 && range.row();
+        });
         break;
       }
       case BotStep.forward: {
@@ -165,8 +166,8 @@ export class globalComposer extends BaseComposer {
     .route(BotStep.name, async (ctx) => {
       await this.globalService.updateUser(ctx.from.id, { credentials: ctx.message.text });
       ctx.session.step = BotStep.phone;
-      await ctx.reply('askPhone', {
-        reply_markup: new Keyboard().requestContact('contact'),
+      await ctx.reply(ctx.i18n.t('askPhone'), {
+        reply_markup: new Keyboard().requestContact(ctx.i18n.t('contact')),
       });
     })
     .route(BotStep.forward, async (ctx) => {

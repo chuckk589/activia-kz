@@ -1,6 +1,7 @@
 import 'core-js/stable';
 // import 'ag-grid-enterprise';
 import Vue from 'vue';
+import VueMeta from 'vue-meta';
 import CoreuiVuePro from '@coreui/vue-pro/src/index.js';
 import App from './App';
 import router from './router/index';
@@ -8,6 +9,7 @@ import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import axios from 'axios';
 
+Vue.use(VueMeta);
 Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$http = axios;
@@ -39,6 +41,9 @@ new Vue({
   template: '<App/>',
   components: {
     App,
+  },
+  metaInfo: {
+    title: 'Activia',
   },
   mounted: function () {
     this.$http({ method: 'GET', url: `/v1/status/` }).then((e) => {

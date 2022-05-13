@@ -65,20 +65,26 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                     break;
                 }
                 case enums_1.BotStep.city: {
-                    this.AppConfigService.cities.map((city) => range.text((0, helpers_1.label)({ text: city.translation[locale] }), async (ctx) => {
-                        ctx.session.step = enums_1.BotStep.promo;
-                        await this.globalService.updateCity(ctx.from.id, city.id);
-                        await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
-                    }));
+                    this.AppConfigService.cities.map((city, index) => {
+                        range.text((0, helpers_1.label)({ text: city.translation[locale] }), async (ctx) => {
+                            ctx.session.step = enums_1.BotStep.promo;
+                            await this.globalService.updateCity(ctx.from.id, city.id);
+                            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
+                        }),
+                            index % 3 === 0 && range.row();
+                    });
                     break;
                 }
                 case enums_1.BotStep.promo: {
-                    this.AppConfigService.promos.map((promo) => range.text((0, helpers_1.label)({ text: promo.translation[locale] }), async (ctx) => {
-                        await this.globalService.updatePromo(ctx.from.id, promo.id);
-                        ctx.session.step = enums_1.BotStep.name;
-                        ctx.menu.close();
-                        await ctx.reply(ctx.i18n.t('askName'));
-                    }));
+                    this.AppConfigService.promos.map((promo, index) => {
+                        range.text((0, helpers_1.label)({ text: promo.translation[locale] }), async (ctx) => {
+                            await this.globalService.updatePromo(ctx.from.id, promo.id);
+                            ctx.session.step = enums_1.BotStep.name;
+                            ctx.menu.close();
+                            await ctx.reply(ctx.i18n.t('askName'));
+                        });
+                        index % 2 === 0 && range.row();
+                    });
                     break;
                 }
                 case enums_1.BotStep.forward: {
@@ -162,8 +168,8 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
             .route(enums_1.BotStep.name, async (ctx) => {
             await this.globalService.updateUser(ctx.from.id, { credentials: ctx.message.text });
             ctx.session.step = enums_1.BotStep.phone;
-            await ctx.reply('askPhone', {
-                reply_markup: new grammy_1.Keyboard().requestContact('contact'),
+            await ctx.reply(ctx.i18n.t('askPhone'), {
+                reply_markup: new grammy_1.Keyboard().requestContact(ctx.i18n.t('contact')),
             });
         })
             .route(enums_1.BotStep.forward, async (ctx) => {
