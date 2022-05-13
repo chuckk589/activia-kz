@@ -23,12 +23,15 @@ const Promo_1 = require("../mikroorm/entities/Promo");
 const User_1 = require("../mikroorm/entities/User");
 const retrieve_status_dto_1 = require("./dto/retrieve-status.dto");
 const fs_1 = __importDefault(require("fs"));
+const i18n_1 = __importDefault(require("../bot/middleware/i18n"));
 let StatusService = class StatusService {
     constructor(em) {
         this.em = em;
     }
     updateLocales(updateLocaleDto) {
-        fs_1.default.writeFileSync(`./dist/modules/bot/locales/${updateLocaleDto.ru ? 'ru' : 'uz'}.json`, JSON.stringify(updateLocaleDto.ru || updateLocaleDto.uz));
+        const existingLocale = updateLocaleDto.ru ? 'ru' : 'uz';
+        fs_1.default.writeFileSync(`./dist/modules/bot/locales/${existingLocale}.json`, JSON.stringify(updateLocaleDto[existingLocale]));
+        i18n_1.default.loadLocale(existingLocale, updateLocaleDto[existingLocale]);
     }
     async findLocales() {
         return {

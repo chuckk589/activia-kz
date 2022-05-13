@@ -122,7 +122,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
             ctx.session.isRegistered
                 ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) })
                 : await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
-                    caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('choose_lang'),
+                    caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('chooseLang'),
                     reply_markup: this.menu,
                 });
         };
