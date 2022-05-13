@@ -40,7 +40,6 @@ export class globalService {
       { chatId: String(from) },
       {
         promo: this.em.getReference(Promo, id),
-        registered: true,
       },
     );
   }

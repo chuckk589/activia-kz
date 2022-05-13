@@ -32,65 +32,96 @@ enum ComposerMethod {
 
 export type MenuKeyFunction = (ctx: BotContext) => { keys: string[] };
 
+function concatChildren(children: BotListenerMetadata[], parent: Composer<BotContext>) {
+  console.log('concatChildren', parent);
+  children.forEach((child) => {
+    const pm = applyComposerMethod.call(this, child, parent);
+    if (child.children.length) {
+      concatChildren.call(this, child.children, pm);
+    }
+  });
+}
+function applyComposerMethod(handler: BotListenerMetadata, parent?: Composer<BotContext>): Composer<BotContext> {
+  switch (handler.method) {
+    case ComposerMethod.command:
+    case ComposerMethod.on:
+    case ComposerMethod.hears:
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return parent[handler.method](handler.payload, this[handler.key]);
+    case ComposerMethod.use:
+    case ComposerMethod.filter:
+      return parent[handler.method](this[handler.key]);
+  }
+}
 export function ComposerController<T extends { new (...args: any[]): any }>(constructor: T) {
-  const fn = (fn: () => Composer<Context>) => fn();
   return class extends constructor {
-    _composer = fn(() => {
-      const composer = new Composer();
-      const handlers: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, constructor.prototype);
-      //TODO: bind?
-      const that = <any>this;
-      // handlers = handlers.filter((handler) =>
-      //   handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true,
-      // );
-      //TODO: make children work for all methods
-      //console.log(handlers);
-      handlers.map((handler) => {
-        switch (handler.method) {
-          case ComposerMethod.on: {
-            composer.on(handler.payload as FilterQuery, that[handler.key]);
-            break;
-          }
-          case ComposerMethod.command: {
-            composer.command(handler.payload as FilterQuery, that[handler.key]);
-            break;
-          }
-          case ComposerMethod.use: {
-            composer.use(that[handler.key]);
-            break;
-          }
-          case ComposerMethod.hears: {
-            composer.hears(handler.payload, that[handler.key]);
-            break;
-          }
-          case ComposerMethod.filter: {
-            composer.filter(that[handler.key]);
-
-            break;
-          }
-          // case ComposerMethod.dynamic: {
-          //   const menu = new MenuGrammy<BotContext>(String(handler.payload));
-          //   menu.dynamic((ctx: BotContext, range) => {
-          //     const keys: string[] = that[handler.key](ctx);
-          //     handler.children
-          //       .filter((child) => keys.includes(String(child.payload)))
-          //       .map((child) => {
-          //         switch (child.method) {
-          //           case ComposerMethod.menuText: {
-          //             range.text(String(child.payload), that[child.key]);
-          //             break;
-          //           }
-          //         }
-          //       });
-          //     return range;
-          //   });
-          //   composer.use(menu);
-          //   break;
-          // }
-        }
-      });
+    get _composer() {
+      const composer = new Composer<BotContext>();
+      let handlers: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, this);
+      //fill children
+      handlers = handlers.filter((handler) =>
+        handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true,
+      );
+      concatChildren.call(this, handlers, composer);
       return composer;
-    });
+    }
+    // _composer = fn(() => {
+    //   const composer = new Composer();
+    //   const handlers: BotListenerMetadata[] = Reflect.getMetadata(LISTENERS_METADATA, constructor.prototype);
+    //   //TODO: bind?
+    //   const that = <any>this;
+    // handlers = handlers.filter((handler) =>
+    //   handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true,
+    // );
+    // TODO: make children work for all methods
+    //   //console.log(handlers);
+    //   handlers.map((handler) => {
+    //     switch (handler.method) {
+    //       case ComposerMethod.on: {
+    //         composer.on(handler.payload as FilterQuery, that[handler.key]);
+    //         break;
+    //       }
+    //       case ComposerMethod.command: {
+    //         composer.command(handler.payload as FilterQuery, that[handler.key]);
+    //         break;
+    //       }
+    //       case ComposerMethod.use: {
+    //         composer.use(that[handler.key]);
+    //         break;
+    //       }
+    //       case ComposerMethod.hears: {
+    //         composer.hears(handler.payload, that[handler.key]);
+    //         break;
+    //       }
+    //       case ComposerMethod.filter: {
+    //         composer.filter(that[handler.key]);
+
+    //         break;
+    //       }
+    //       // case ComposerMethod.dynamic: {
+    //       //   const menu = new MenuGrammy<BotContext>(String(handler.payload));
+    //       //   menu.dynamic((ctx: BotContext, range) => {
+    //       //     const keys: string[] = that[handler.key](ctx);
+    //       //     handler.children
+    //       //       .filter((child) => keys.includes(String(child.payload)))
+    //       //       .map((child) => {
+    //       //         switch (child.method) {
+    //       //           case ComposerMethod.menuText: {
+    //       //             range.text(String(child.payload), that[child.key]);
+    //       //             break;
+    //       //           }
+    //       //         }
+    //       //       });
+    //       //     return range;
+    //       //   });
+    //       //   composer.use(menu);
+    //       //   break;
+    //       // }
+    //     }
+    //   });
+    //   return composer;
+    // });
   };
 }
 
@@ -122,5 +153,3 @@ export const Command = createListenerDecorator<string>(ComposerMethod.command);
 export const On = createListenerDecorator<FilterQuery | FilterQuery[]>(ComposerMethod.on);
 export const Filter = createListenerDecorator(ComposerMethod.filter);
 export const Hears = createListenerDecorator(ComposerMethod.hears);
-
-// export const Text = createMenuListenerDecorator(ComposerMethod.menuText);

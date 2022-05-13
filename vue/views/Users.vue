@@ -39,7 +39,6 @@
 
 <script>
 import CExtendedModal from '../components/table/CExtendedModal.vue'
-import { AgGridVue } from "ag-grid-vue";
 //@filtered-items-change="getCurrentItems"
 export default {
   name: 'Users',

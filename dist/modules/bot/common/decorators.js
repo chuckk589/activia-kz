@@ -21,41 +21,34 @@ var ComposerMethod;
     ComposerMethod["hears"] = "hears";
     ComposerMethod["filter"] = "filter";
 })(ComposerMethod || (ComposerMethod = {}));
+function concatChildren(children, parent) {
+    console.log('concatChildren', parent);
+    children.forEach((child) => {
+        const pm = applyComposerMethod.call(this, child, parent);
+        if (child.children.length) {
+            concatChildren.call(this, child.children, pm);
+        }
+    });
+}
+function applyComposerMethod(handler, parent) {
+    switch (handler.method) {
+        case ComposerMethod.command:
+        case ComposerMethod.on:
+        case ComposerMethod.hears:
+            return parent[handler.method](handler.payload, this[handler.key]);
+        case ComposerMethod.use:
+        case ComposerMethod.filter:
+            return parent[handler.method](this[handler.key]);
+    }
+}
 function ComposerController(constructor) {
-    const fn = (fn) => fn();
     return class extends constructor {
-        constructor() {
-            super(...arguments);
-            this._composer = fn(() => {
-                const composer = new grammy_1.Composer();
-                const handlers = Reflect.getMetadata(constants_1.LISTENERS_METADATA, constructor.prototype);
-                const that = this;
-                handlers.map((handler) => {
-                    switch (handler.method) {
-                        case ComposerMethod.on: {
-                            composer.on(handler.payload, that[handler.key]);
-                            break;
-                        }
-                        case ComposerMethod.command: {
-                            composer.command(handler.payload, that[handler.key]);
-                            break;
-                        }
-                        case ComposerMethod.use: {
-                            composer.use(that[handler.key]);
-                            break;
-                        }
-                        case ComposerMethod.hears: {
-                            composer.hears(handler.payload, that[handler.key]);
-                            break;
-                        }
-                        case ComposerMethod.filter: {
-                            composer.filter(that[handler.key]);
-                            break;
-                        }
-                    }
-                });
-                return composer;
-            });
+        get _composer() {
+            const composer = new grammy_1.Composer();
+            let handlers = Reflect.getMetadata(constants_1.LISTENERS_METADATA, this);
+            handlers = handlers.filter((handler) => handler.parent ? !handlers.find((h) => h.key === handler.parent)?.children.push(handler) : true);
+            concatChildren.call(this, handlers, composer);
+            return composer;
         }
     };
 }

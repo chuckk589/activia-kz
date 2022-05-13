@@ -38,14 +38,12 @@ export class globalComposer extends BaseComposer {
       }
       case BotStep.age: {
         range.text(label({ text: 'yes' }), async (ctx) => {
-          ctx.session.step = BotStep.phone;
-          await ctx.reply('askPhone', {
-            reply_markup: new Keyboard().requestContact('contact'),
-          });
+          ctx.session.step = BotStep.gender;
+          await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender') });
         });
         range.text(label({ text: 'no' }), async (ctx) => {
           ctx.session.step = BotStep.default;
-          await ctx.deleteMessage();
+          ctx.menu.close();
           await ctx.reply(ctx.i18n.t('restricted'));
         });
         break;
@@ -53,9 +51,8 @@ export class globalComposer extends BaseComposer {
       case BotStep.gender: {
         Object.values(UserGender).map((gender) => {
           range.text(label({ text: gender }), async (ctx) => {
-            ctx.session.step = BotStep.name;
-            await this.globalService.updateUser(ctx.from.id, { gender: gender as UserGender });
-            await ctx.editMessageText(ctx.i18n.t('askName'));
+            ctx.session.step = BotStep.city;
+            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
           });
         });
         break;
@@ -65,7 +62,8 @@ export class globalComposer extends BaseComposer {
           range.text(label({ text: city.translation[locale] }), async (ctx) => {
             ctx.session.step = BotStep.promo;
             await this.globalService.updateCity(ctx.from.id, city.id);
-            await ctx.editMessageText(ctx.i18n.t('askPromo'));
+            //await ctx.editMessageText(ctx.i18n.t('askPromo'));
+            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
           }),
         );
         break;
@@ -74,9 +72,9 @@ export class globalComposer extends BaseComposer {
         this.AppConfigService.promos.map((promo) =>
           range.text(label({ text: promo.translation[locale] }), async (ctx) => {
             await this.globalService.updatePromo(ctx.from.id, promo.id);
-            ctx.session.step = BotStep.registered;
-            await ctx.clean();
-            await ctx.reply(ctx.i18n.t('registered'), { reply_markup: mainKeyboard(ctx) });
+            ctx.session.step = BotStep.name;
+            ctx.menu.close();
+            await ctx.reply(ctx.i18n.t('askName'));
           }),
         );
         break;
@@ -107,17 +105,19 @@ export class globalComposer extends BaseComposer {
     }
     return range;
   });
-  //TODO: check reg and pull to menu if so
   @Command('start')
   start = async (ctx: BotContext) => {
     ctx.session.step = BotStep.default;
     const user = await this.globalService.getUser(ctx);
+    ctx.session.isRegistered = user.registered;
     ctx.i18n.locale(user.locale);
     //FIXME:
-    await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
-      caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('choose_lang'),
-      reply_markup: this.menu,
-    });
+    ctx.session.isRegistered
+      ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: mainKeyboard(ctx) })
+      : await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
+          caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('choose_lang'),
+          reply_markup: this.menu,
+        });
   };
   @Command('admin')
   admin = async (ctx: BotContext) => {
@@ -151,18 +151,21 @@ export class globalComposer extends BaseComposer {
   @On(':contact')
   contact = async (ctx: BotContext) => {
     if (ctx.session.step == BotStep.phone) {
-      await this.globalService.updateUser(ctx.from.id, { phone: ctx.message.contact.phone_number });
-      ctx.session.step = BotStep.gender;
-      await ctx.replyAndSave(ctx.i18n.t('askGender'), { reply_markup: this.menu });
+      await this.globalService.updateUser(ctx.from.id, { phone: ctx.message.contact.phone_number, registered: true });
+      ctx.session.step = BotStep.default;
+      ctx.session.isRegistered = true;
+      await ctx.reply(ctx.i18n.t('registered'), { reply_markup: mainKeyboard(ctx) });
     }
   };
 
   @Use()
-  router = new Router<BotContext>((ctx) => ctx.session.step) //
+  router = new Router<BotContext>((ctx) => ctx.session.step)
     .route(BotStep.name, async (ctx) => {
       await this.globalService.updateUser(ctx.from.id, { credentials: ctx.message.text });
-      ctx.session.step = BotStep.city;
-      await ctx.cleanReplySave(ctx.i18n.t('askCity'), { reply_markup: this.menu });
+      ctx.session.step = BotStep.phone;
+      await ctx.reply('askPhone', {
+        reply_markup: new Keyboard().requestContact('contact'),
+      });
     })
     .route(BotStep.forward, async (ctx) => {
       ctx.session.bulkId = ctx.message.message_id;

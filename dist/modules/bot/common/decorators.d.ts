@@ -1,4 +1,4 @@
-import { Composer, Context } from 'grammy';
+import { Composer } from 'grammy';
 import { BotContext } from 'src/types/interfaces';
 export declare type MenuKeyFunction = (ctx: BotContext) => {
     keys: string[];
@@ -8,7 +8,7 @@ export declare function ComposerController<T extends {
 }>(constructor: T): {
     new (...args: any[]): {
         [x: string]: any;
-        _composer: Composer<Context>;
+        readonly _composer: Composer<BotContext>;
     };
 } & T;
 export declare const Use: (payload?: unknown, parent?: string) => PropertyDecorator;

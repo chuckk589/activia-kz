@@ -10,7 +10,6 @@ var BotStep;
     BotStep["name"] = "name";
     BotStep["city"] = "city";
     BotStep["promo"] = "promo";
-    BotStep["registered"] = "registered";
     BotStep["forward"] = "forward";
 })(BotStep = exports.BotStep || (exports.BotStep = {}));
 //# sourceMappingURL=enums.js.map

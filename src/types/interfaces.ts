@@ -73,6 +73,7 @@ export class AdminCommand {
   action: AdminAction;
   payload: string;
 }
+export type CheckData = { fancyId: string; checkCount: number };
 export enum AdminAction {
   access = 'access',
   forward = 'forward',

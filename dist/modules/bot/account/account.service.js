@@ -59,7 +59,7 @@ let AccountService = class AccountService {
         return (0, helpers_1.checkMessage)(ctx, checks);
     }
     async registerCheck(from, path) {
-        const user = await this.em.findOneOrFail(User_1.User, { chatId: String(from) });
+        const user = await this.em.findOneOrFail(User_1.User, { chatId: String(from) }, { populate: ['checks'] });
         return await this.insertNewCheck(user, path);
     }
     async insertNewCheck(user, path) {
@@ -67,7 +67,7 @@ let AccountService = class AccountService {
             const check = new Check_1.Check({ path });
             user.checks.add(check);
             await this.em.persistAndFlush(user);
-            return check;
+            return { fancyId: check.fancyId, checkCount: user.checks.length };
         }
         catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {
@@ -101,15 +101,15 @@ let AccountService = class AccountService {
         });
     }
     async isRegistered(ctx) {
-        if (ctx.session.isRegistered === undefined) {
-            const user = await this.em.findOne(User_1.User, { chatId: String(ctx.from.id) });
-            if (!user || !user.registered)
-                return false;
-            ctx.session.isRegistered = user.registered;
+        switch (ctx.session.isRegistered) {
+            case undefined: {
+                const user = await this.em.findOneOrFail(User_1.User, { chatId: String(ctx.from.id) });
+                ctx.session.isRegistered = user.registered;
+                return ctx.session.isRegistered;
+            }
+            default:
+                return ctx.session.isRegistered;
         }
-        if (ctx.session.isRegistered)
-            return true;
-        return false;
     }
 };
 AccountService = __decorate([

@@ -46,9 +46,13 @@ AppModule = __decorate([
                     return {
                         type: 'mysql',
                         allowGlobalContext: true,
-                        driverOptions: {
-                            connection: { socketPath: '/var/lib/mysql/mysql.sock' },
-                        },
+                        ...(configService.get('node_env') === 'production'
+                            ? {
+                                driverOptions: {
+                                    connection: { socketPath: '/var/lib/mysql/mysql.sock' },
+                                },
+                            }
+                            : { debug: true, logger: console.log.bind(console) }),
                         entities: ['./dist/modules/mikroorm/entities/'],
                         entitiesTs: ['./src/modules/mikroorm/entities/'],
                         clientUrl: configService.get('database', { infer: true }),

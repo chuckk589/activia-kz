@@ -11,7 +11,6 @@ exports.BotModule = void 0;
 const common_1 = require("@nestjs/common");
 const grammy_1 = require("grammy");
 const constants_1 = require("../../constants");
-const enums_1 = require("../../types/enums");
 const interfaces_1 = require("../../types/interfaces");
 let BotModule = BotModule_1 = class BotModule {
     static forRootAsync(options) {
@@ -41,21 +40,6 @@ let BotModule = BotModule_1 = class BotModule {
             { command: 'start', description: 'Start the bot' },
             { command: 'admin', description: 'Admin section' },
         ]);
-        bot.catch((err) => {
-            const ctx = err.ctx;
-            ctx.session.step = enums_1.BotStep.default;
-            console.error(`Error while handling update ${ctx.update.update_id}:`);
-            const e = err.error;
-            if (e instanceof grammy_1.GrammyError) {
-                console.error('Error in request:', e.description);
-            }
-            else if (e instanceof grammy_1.HttpError) {
-                console.error('Could not contact Telegram:', e);
-            }
-            else {
-                console.error('Unknown error:', e);
-            }
-        });
         bot.start();
         return bot;
     }

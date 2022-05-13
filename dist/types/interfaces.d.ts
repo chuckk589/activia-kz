@@ -33,6 +33,10 @@ export declare class AdminCommand {
     action: AdminAction;
     payload: string;
 }
+export declare type CheckData = {
+    fancyId: string;
+    checkCount: number;
+};
 export declare enum AdminAction {
     access = "access",
     forward = "forward",

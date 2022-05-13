@@ -7,9 +7,23 @@ import { Prize } from '../mikroorm/entities/Prize';
 import { Promo } from '../mikroorm/entities/Promo';
 import { Locale, UserRole } from '../mikroorm/entities/User';
 import { RetrieveStatusDto } from './dto/retrieve-status.dto';
+import fs from 'fs';
+import { UpdateLocaleDto } from './dto/update-locale.dto';
 
 @Injectable()
 export class StatusService {
+  updateLocales(updateLocaleDto: UpdateLocaleDto) {
+    fs.writeFileSync(
+      `./dist/modules/bot/locales/${updateLocaleDto.ru ? 'ru' : 'uz'}.json`,
+      JSON.stringify(updateLocaleDto.ru || updateLocaleDto.uz),
+    );
+  }
+  async findLocales(): Promise<{ [key: string]: { [key: string]: string } }> {
+    return {
+      ru: JSON.parse(fs.readFileSync('./dist/modules/bot/locales/ru.json', 'utf8')),
+      uz: JSON.parse(fs.readFileSync('./dist/modules/bot/locales/uz.json', 'utf8')),
+    };
+  }
   constructor(private readonly em: EntityManager) {}
   async findAll(): Promise<Record<string, RetrieveStatusDto[]>> {
     const cities = await this.em.find(City, {}, { populate: ['translation.values'] });

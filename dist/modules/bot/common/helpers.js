@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomArrayValues = exports.prizeMessageWeek = exports.winnersMessage = exports.prizeMessage = exports.checkMessage = exports.label = exports.match = void 0;
+exports.getRandomArrayValues = exports.checkMessageByCount = exports.prizeMessageWeek = exports.winnersMessage = exports.prizeMessage = exports.checkMessage = exports.label = exports.match = void 0;
 const User_1 = require("../../mikroorm/entities/User");
 const i18n_1 = __importDefault(require("../middleware/i18n"));
 function match(key) {
@@ -56,6 +56,11 @@ const prizeMessageWeek = (ctx, week) => {
     }, ctx.i18n.t('winners'));
 };
 exports.prizeMessageWeek = prizeMessageWeek;
+const checkMessageByCount = (ctx, check) => {
+    const translationKey = check.checkCount < 6 ? `checkAccepted_${check.checkCount}` : 'checkAccepted';
+    return ctx.i18n.t(translationKey, { id: check.fancyId, count: check.checkCount });
+};
+exports.checkMessageByCount = checkMessageByCount;
 const getRandomArrayValues = (arr, count) => {
     const shuffled = arr.slice(0);
     const result = [];

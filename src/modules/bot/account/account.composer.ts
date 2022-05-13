@@ -3,7 +3,7 @@ import { ComposerController, Filter, Hears, On, Use } from '../common/decorators
 import { AccountService } from './account.service';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Menu } from '@grammyjs/menu';
-import { label, prizeMessage, prizeMessageWeek, winnersMessage } from '../common/helpers';
+import { checkMessageByCount, label, prizeMessage, prizeMessageWeek, winnersMessage } from '../common/helpers';
 
 @ComposerController
 export class AccountComposer extends BaseComposer {
@@ -12,7 +12,10 @@ export class AccountComposer extends BaseComposer {
   }
   //FIXME: make nested
   @Filter()
-  filter = async (ctx: BotContext) => await this.accountService.isRegistered(ctx);
+  filter = async (ctx: BotContext) => {
+    const isRegistered = await this.accountService.isRegistered(ctx);
+    return isRegistered ? true : !(await ctx.reply(ctx.i18n.t('notRegistered')));
+  };
 
   @Use(undefined, 'filter')
   menu = new Menu<BotContext>('winner-menu').dynamic((ctx, range) => {
@@ -24,19 +27,19 @@ export class AccountComposer extends BaseComposer {
     });
   });
 
-  @Hears('takePart', 'filter')
+  @Hears('participate', 'filter')
   takePart = async (ctx: BotContext) => {
-    await ctx.reply(ctx.i18n.t('takePart'));
+    await ctx.reply(ctx.i18n.t('participateDetails'));
   };
 
   @Hears('about', 'filter')
   about = async (ctx: BotContext) => {
-    await ctx.reply(ctx.i18n.t('about'));
+    await ctx.reply(ctx.i18n.t('aboutDetails'));
   };
 
-  @Hears('contactUs', 'filter')
+  @Hears('contacts', 'filter')
   contactUs = async (ctx: BotContext) => {
-    await ctx.reply(ctx.i18n.t('contactUs'));
+    await ctx.reply(ctx.i18n.t('contactDetails'));
   };
 
   @Hears('myChecks', 'filter')
@@ -60,13 +63,13 @@ export class AccountComposer extends BaseComposer {
   @Hears('rules', 'filter')
   rules = async (ctx: BotContext) => {
     const url = this.AppConfigService.get('url');
-    await ctx.reply(ctx.i18n.t('get-rules', { link: url + '/files/rules.pdf' }), { parse_mode: 'HTML' });
+    await ctx.reply(ctx.i18n.t('getRules', { link: url + '/assets/rules.pdf' }), { parse_mode: 'HTML' });
   };
 
   @On(':photo', 'filter')
   photo = async (ctx: BotContext) => {
     const path = await this.accountService.downloadFile(ctx);
     const check = await this.accountService.registerCheck(ctx.from.id, path);
-    await ctx.reply(ctx.i18n.t('checkAccepted', { id: check.fancyId }));
+    await ctx.reply(checkMessageByCount(ctx, check));
   };
 }

@@ -10,6 +10,11 @@
           Home
         </CHeaderNavLink>
       </CHeaderNavItem>
+      <CHeaderNavItem class="px-3">
+        <CHeaderNavLink to="/locales">
+          Locales
+        </CHeaderNavLink>
+      </CHeaderNavItem>
     </CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3">

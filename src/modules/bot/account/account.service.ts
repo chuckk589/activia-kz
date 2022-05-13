@@ -2,7 +2,7 @@ import { EntityDTO, EntityManager, UniqueConstraintViolationException, wrap } fr
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Locale, User } from 'src/modules/mikroorm/entities/User';
-import { BotContext } from 'src/types/interfaces';
+import { BotContext, CheckData } from 'src/types/interfaces';
 import axios from 'axios';
 import fs from 'fs';
 import { Check } from 'src/modules/mikroorm/entities/Check';
@@ -56,16 +56,16 @@ export class AccountService {
     );
     return checkMessage(ctx, checks);
   }
-  async registerCheck(from: number, path: string): Promise<Check> {
-    const user = await this.em.findOneOrFail(User, { chatId: String(from) });
+  async registerCheck(from: number, path: string): Promise<CheckData> {
+    const user = await this.em.findOneOrFail(User, { chatId: String(from) }, { populate: ['checks'] });
     return await this.insertNewCheck(user, path);
   }
-  async insertNewCheck(user: User, path: string): Promise<Check> {
+  async insertNewCheck(user: User, path: string): Promise<CheckData> {
     try {
       const check = new Check({ path });
       user.checks.add(check);
       await this.em.persistAndFlush(user);
-      return check;
+      return { fancyId: check.fancyId, checkCount: user.checks.length };
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         this.logger.warn(`Failed to insert new check: ER_DUP_ENTRY ${user.chatId}`);
@@ -98,12 +98,14 @@ export class AccountService {
     });
   }
   async isRegistered(ctx: BotContext): Promise<boolean> {
-    if (ctx.session.isRegistered === undefined) {
-      const user = await this.em.findOne(User, { chatId: String(ctx.from.id) });
-      if (!user || !user.registered) return false;
-      ctx.session.isRegistered = user.registered;
+    switch (ctx.session.isRegistered) {
+      case undefined: {
+        const user = await this.em.findOneOrFail(User, { chatId: String(ctx.from.id) });
+        ctx.session.isRegistered = user.registered;
+        return ctx.session.isRegistered;
+      }
+      default:
+        return ctx.session.isRegistered;
     }
-    if (ctx.session.isRegistered) return true;
-    return false;
   }
 }

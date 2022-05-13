@@ -52,7 +52,6 @@ let globalService = class globalService {
     async updatePromo(from, id) {
         await this.em.nativeUpdate(User_1.User, { chatId: String(from) }, {
             promo: this.em.getReference(Promo_1.Promo, id),
-            registered: true,
         });
     }
     async updateCity(from, id) {

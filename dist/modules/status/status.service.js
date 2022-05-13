@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const core_1 = require("@mikro-orm/core");
@@ -19,9 +22,19 @@ const Prize_1 = require("../mikroorm/entities/Prize");
 const Promo_1 = require("../mikroorm/entities/Promo");
 const User_1 = require("../mikroorm/entities/User");
 const retrieve_status_dto_1 = require("./dto/retrieve-status.dto");
+const fs_1 = __importDefault(require("fs"));
 let StatusService = class StatusService {
     constructor(em) {
         this.em = em;
+    }
+    updateLocales(updateLocaleDto) {
+        fs_1.default.writeFileSync(`./dist/modules/bot/locales/${updateLocaleDto.ru ? 'ru' : 'uz'}.json`, JSON.stringify(updateLocaleDto.ru || updateLocaleDto.uz));
+    }
+    async findLocales() {
+        return {
+            ru: JSON.parse(fs_1.default.readFileSync('./dist/modules/bot/locales/ru.json', 'utf8')),
+            uz: JSON.parse(fs_1.default.readFileSync('./dist/modules/bot/locales/uz.json', 'utf8')),
+        };
     }
     async findAll() {
         const cities = await this.em.find(City_1.City, {}, { populate: ['translation.values'] });

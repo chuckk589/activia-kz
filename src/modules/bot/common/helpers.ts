@@ -1,7 +1,7 @@
 import { Check } from 'src/modules/mikroorm/entities/Check';
 import { BotLotteryDto, Lottery } from 'src/modules/mikroorm/entities/Lottery';
 import { Locale } from 'src/modules/mikroorm/entities/User';
-import { BotContext } from 'src/types/interfaces';
+import { BotContext, CheckData } from 'src/types/interfaces';
 import i18n from '../middleware/i18n';
 
 export function match(key: string): RegExp {
@@ -50,6 +50,10 @@ export const prizeMessageWeek = (ctx: BotContext, week: number): string => {
     }, ctx.i18n.t('winners'));
 };
 
+export const checkMessageByCount = (ctx: BotContext, check: CheckData): string => {
+  const translationKey = check.checkCount < 6 ? `checkAccepted_${check.checkCount}` : 'checkAccepted';
+  return ctx.i18n.t(translationKey, { id: check.fancyId, count: check.checkCount });
+};
 export const getRandomArrayValues = <T>(arr: T[], count: number): T[] => {
   const shuffled = arr.slice(0);
   const result = [];

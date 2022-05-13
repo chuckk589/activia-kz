@@ -6,6 +6,5 @@ export enum BotStep {
   name = 'name',
   city = 'city',
   promo = 'promo',
-  registered = 'registered',
   forward = 'forward',
 }

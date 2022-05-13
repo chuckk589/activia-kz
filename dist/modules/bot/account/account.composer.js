@@ -21,7 +21,10 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
         super();
         this.accountService = accountService;
         this.AppConfigService = AppConfigService;
-        this.filter = async (ctx) => await this.accountService.isRegistered(ctx);
+        this.filter = async (ctx) => {
+            const isRegistered = await this.accountService.isRegistered(ctx);
+            return isRegistered ? true : !(await ctx.reply(ctx.i18n.t('notRegistered')));
+        };
         this.menu = new menu_1.Menu('winner-menu').dynamic((ctx, range) => {
             const weeks = Array.from(new Set(ctx.session.winners.map((winner) => winner.week)));
             weeks.map((week, idx) => {
@@ -31,13 +34,13 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
             });
         });
         this.takePart = async (ctx) => {
-            await ctx.reply(ctx.i18n.t('takePart'));
+            await ctx.reply(ctx.i18n.t('participateDetails'));
         };
         this.about = async (ctx) => {
-            await ctx.reply(ctx.i18n.t('about'));
+            await ctx.reply(ctx.i18n.t('aboutDetails'));
         };
         this.contactUs = async (ctx) => {
-            await ctx.reply(ctx.i18n.t('contactUs'));
+            await ctx.reply(ctx.i18n.t('contactDetails'));
         };
         this.myChecks = async (ctx) => {
             const message = await this.accountService.getUserChecks(ctx);
@@ -53,12 +56,12 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
         };
         this.rules = async (ctx) => {
             const url = this.AppConfigService.get('url');
-            await ctx.reply(ctx.i18n.t('get-rules', { link: url + '/files/rules.pdf' }), { parse_mode: 'HTML' });
+            await ctx.reply(ctx.i18n.t('getRules', { link: url + '/assets/rules.pdf' }), { parse_mode: 'HTML' });
         };
         this.photo = async (ctx) => {
             const path = await this.accountService.downloadFile(ctx);
             const check = await this.accountService.registerCheck(ctx.from.id, path);
-            await ctx.reply(ctx.i18n.t('checkAccepted', { id: check.fancyId }));
+            await ctx.reply((0, helpers_1.checkMessageByCount)(ctx, check));
         };
     }
 };
@@ -71,7 +74,7 @@ __decorate([
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "menu", void 0);
 __decorate([
-    (0, decorators_1.Hears)('takePart', 'filter'),
+    (0, decorators_1.Hears)('participate', 'filter'),
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "takePart", void 0);
 __decorate([
@@ -79,7 +82,7 @@ __decorate([
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "about", void 0);
 __decorate([
-    (0, decorators_1.Hears)('contactUs', 'filter'),
+    (0, decorators_1.Hears)('contacts', 'filter'),
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "contactUs", void 0);
 __decorate([

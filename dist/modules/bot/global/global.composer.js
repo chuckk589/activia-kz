@@ -45,14 +45,12 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                 }
                 case enums_1.BotStep.age: {
                     range.text((0, helpers_1.label)({ text: 'yes' }), async (ctx) => {
-                        ctx.session.step = enums_1.BotStep.phone;
-                        await ctx.reply('askPhone', {
-                            reply_markup: new grammy_1.Keyboard().requestContact('contact'),
-                        });
+                        ctx.session.step = enums_1.BotStep.gender;
+                        await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender') });
                     });
                     range.text((0, helpers_1.label)({ text: 'no' }), async (ctx) => {
                         ctx.session.step = enums_1.BotStep.default;
-                        await ctx.deleteMessage();
+                        ctx.menu.close();
                         await ctx.reply(ctx.i18n.t('restricted'));
                     });
                     break;
@@ -60,9 +58,8 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                 case enums_1.BotStep.gender: {
                     Object.values(User_1.UserGender).map((gender) => {
                         range.text((0, helpers_1.label)({ text: gender }), async (ctx) => {
-                            ctx.session.step = enums_1.BotStep.name;
-                            await this.globalService.updateUser(ctx.from.id, { gender: gender });
-                            await ctx.editMessageText(ctx.i18n.t('askName'));
+                            ctx.session.step = enums_1.BotStep.city;
+                            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
                         });
                     });
                     break;
@@ -71,16 +68,16 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                     this.AppConfigService.cities.map((city) => range.text((0, helpers_1.label)({ text: city.translation[locale] }), async (ctx) => {
                         ctx.session.step = enums_1.BotStep.promo;
                         await this.globalService.updateCity(ctx.from.id, city.id);
-                        await ctx.editMessageText(ctx.i18n.t('askPromo'));
+                        await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
                     }));
                     break;
                 }
                 case enums_1.BotStep.promo: {
                     this.AppConfigService.promos.map((promo) => range.text((0, helpers_1.label)({ text: promo.translation[locale] }), async (ctx) => {
                         await this.globalService.updatePromo(ctx.from.id, promo.id);
-                        ctx.session.step = enums_1.BotStep.registered;
-                        await ctx.clean();
-                        await ctx.reply(ctx.i18n.t('registered'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) });
+                        ctx.session.step = enums_1.BotStep.name;
+                        ctx.menu.close();
+                        await ctx.reply(ctx.i18n.t('askName'));
                     }));
                     break;
                 }
@@ -114,11 +111,14 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
         this.start = async (ctx) => {
             ctx.session.step = enums_1.BotStep.default;
             const user = await this.globalService.getUser(ctx);
+            ctx.session.isRegistered = user.registered;
             ctx.i18n.locale(user.locale);
-            await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
-                caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('choose_lang'),
-                reply_markup: this.menu,
-            });
+            ctx.session.isRegistered
+                ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) })
+                : await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
+                    caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('choose_lang'),
+                    reply_markup: this.menu,
+                });
         };
         this.admin = async (ctx) => {
             if (ctx.match) {
@@ -152,16 +152,19 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
         };
         this.contact = async (ctx) => {
             if (ctx.session.step == enums_1.BotStep.phone) {
-                await this.globalService.updateUser(ctx.from.id, { phone: ctx.message.contact.phone_number });
-                ctx.session.step = enums_1.BotStep.gender;
-                await ctx.replyAndSave(ctx.i18n.t('askGender'), { reply_markup: this.menu });
+                await this.globalService.updateUser(ctx.from.id, { phone: ctx.message.contact.phone_number, registered: true });
+                ctx.session.step = enums_1.BotStep.default;
+                ctx.session.isRegistered = true;
+                await ctx.reply(ctx.i18n.t('registered'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) });
             }
         };
         this.router = new router_1.Router((ctx) => ctx.session.step)
             .route(enums_1.BotStep.name, async (ctx) => {
             await this.globalService.updateUser(ctx.from.id, { credentials: ctx.message.text });
-            ctx.session.step = enums_1.BotStep.city;
-            await ctx.cleanReplySave(ctx.i18n.t('askCity'), { reply_markup: this.menu });
+            ctx.session.step = enums_1.BotStep.phone;
+            await ctx.reply('askPhone', {
+                reply_markup: new grammy_1.Keyboard().requestContact('contact'),
+            });
         })
             .route(enums_1.BotStep.forward, async (ctx) => {
             ctx.session.bulkId = ctx.message.message_id;
