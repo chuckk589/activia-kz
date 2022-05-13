@@ -17,9 +17,6 @@
         <CLink class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
       </template>
-      <template #status="{ item }">
-        <td>{{ $ctable.check_statuses.find(e => e.value == item.status).label }}</td>
-      </template>
     </CDataTable>
   </div>
 
@@ -62,7 +59,12 @@ export default {
   },
   computed: {
     getRejectReasons() {
-      return this.$ctable.check_statuses.filter(e => e.comment)
+      return this.$ctable.check_statuses.map(e=>{
+        return {
+          label: e.comment?e.comment:e.label,
+          value: e.value
+        }
+      })
     }
   },
   methods: {
@@ -70,7 +72,7 @@ export default {
       this.modalConfig.data = {
         cur: item,
         fields: [
-          { label: 'status', label: 'Статус', key: "status", select: this.$ctable.check_statuses, value: item.status },
+          { label: 'status', label: 'Статус', key: "status", select: this.getRejectReasons, value: this.$ctable.check_statuses.find(c => c.label == item.status).value },
         ],
         footer: 'Сохранить',
         header: 'Просмотр чека',
@@ -89,8 +91,7 @@ export default {
           }
         })
           .then(() => {
-            this.modalConfig.data.cur.status = status_id
-            //this.modalConfig.data.cur.status = this.$ctable.check_statuses.find(c => c.value == status_id).label
+            this.modalConfig.data.cur.status = this.$ctable.check_statuses.find(c => c.value == status_id).label
           })
       }
     },

@@ -6,7 +6,7 @@ export declare class RetrieveCheckDto {
     credentials: string;
     phone: string;
     city: string;
-    status: number;
+    status: string;
     createdAt: string;
     checkPath: string;
 }

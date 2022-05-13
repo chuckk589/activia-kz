@@ -30,7 +30,7 @@ let CheckService = class CheckService {
         this.bot = bot;
     }
     async findAll() {
-        return (await this.em.find(Check_1.Check, {}, { populate: ['user.city.translation.values', 'status.translation.values'] })).map((check) => new retrieve_check_dto_1.RetrieveCheckDto(check));
+        return (await this.em.find(Check_1.Check, {}, { populate: ['user.city.translation.values', 'status.translation.values', 'status.comment.values'] })).map((check) => new retrieve_check_dto_1.RetrieveCheckDto(check));
     }
     async update(id, updateCheckDto) {
         const check = await this.em.findOneOrFail(Check_1.Check, { id }, { populate: ['user'] });
@@ -41,6 +41,9 @@ let CheckService = class CheckService {
         }
         else if (check_status.name == CheckStatus_1.CheckState.APPROVED) {
             message = i18n_1.default.t(check.user.locale, check_status.translation.name, { check_id: check.fancyId });
+        }
+        else {
+            return;
         }
         check.status = check_status;
         await this.em.persistAndFlush(check);

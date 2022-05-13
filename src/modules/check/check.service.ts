@@ -15,7 +15,11 @@ export class CheckService {
 
   async findAll(): Promise<RetrieveCheckDto[]> {
     return (
-      await this.em.find(Check, {}, { populate: ['user.city.translation.values', 'status.translation.values'] })
+      await this.em.find(
+        Check,
+        {},
+        { populate: ['user.city.translation.values', 'status.translation.values', 'status.comment.values'] },
+      )
     ).map((check) => new RetrieveCheckDto(check));
   }
 
@@ -31,6 +35,8 @@ export class CheckService {
       message = i18n.t(check.user.locale, check_status.comment.name, { check_id: check.fancyId });
     } else if (check_status.name == CheckState.APPROVED) {
       message = i18n.t(check.user.locale, check_status.translation.name, { check_id: check.fancyId });
+    } else {
+      return;
     }
     check.status = check_status;
     await this.em.persistAndFlush(check);
