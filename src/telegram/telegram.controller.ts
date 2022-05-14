@@ -1,4 +1,4 @@
-import { Controller, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Api, TelegramClient } from 'telegram';
