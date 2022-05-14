@@ -23,7 +23,7 @@ export class globalComposer extends BaseComposer {
 
   @Use()
   menu = new Menu<BotContext>('reg-menu').dynamic((ctx, range) => {
-    const locale = (ctx.i18n.locale() in Locale ? ctx.i18n.locale() : 'ru') as Locale;
+    const locale = ctx.i18n.locale() as Locale;
     switch (ctx.session.step) {
       case BotStep.default: {
         Object.values(Locale).map((lang) =>

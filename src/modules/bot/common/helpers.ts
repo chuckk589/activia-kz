@@ -15,7 +15,7 @@ export const label = (payload: { text: string; payload?: string }) => {
 
 export const checkMessage = (ctx: BotContext, checks: Check[]): string => {
   if (!checks.length) return ctx.i18n.t('noChecks');
-  const locale = (ctx.i18n.locale() in Locale ? ctx.i18n.locale() : 'ru') as Locale;
+  const locale = ctx.i18n.locale() as Locale;
   const message = checks.reduce((s, c) => {
     s += `\n${c.fancyId} - ${c.status.translation.getLocalizedLabel(locale)}`;
     return s;
@@ -25,7 +25,7 @@ export const checkMessage = (ctx: BotContext, checks: Check[]): string => {
 
 export const prizeMessage = (ctx: BotContext, lotteries: Lottery[]): string => {
   if (!lotteries.length) return ctx.i18n.t('noPrizes');
-  const locale = (ctx.i18n.locale() in Locale ? ctx.i18n.locale() : 'ru') as Locale;
+  const locale = ctx.i18n.locale() as Locale;
   const message = lotteries.reduce((s: string, c: Lottery) => {
     c.winners.toArray().forEach((w) => {
       s += `\n${w.check.fancyId} - ${c.prize.translation.getLocalizedLabel(locale)}`;
