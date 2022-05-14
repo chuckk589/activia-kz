@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRandomArrayValues = exports.checkMessageByCount = exports.prizeMessageWeek = exports.winnersMessage = exports.prizeMessage = exports.checkMessage = exports.label = exports.match = void 0;
-const User_1 = require("../../mikroorm/entities/User");
 const i18n_1 = __importDefault(require("../middleware/i18n"));
 function match(key) {
     const locales = i18n_1.default.availableLocales();
@@ -18,7 +17,7 @@ exports.label = label;
 const checkMessage = (ctx, checks) => {
     if (!checks.length)
         return ctx.i18n.t('noChecks');
-    const locale = (ctx.i18n.locale() in User_1.Locale ? ctx.i18n.locale() : 'ru');
+    const locale = ctx.i18n.locale();
     const message = checks.reduce((s, c) => {
         s += `\n${c.fancyId} - ${c.status.translation.getLocalizedLabel(locale)}`;
         return s;
@@ -29,7 +28,7 @@ exports.checkMessage = checkMessage;
 const prizeMessage = (ctx, lotteries) => {
     if (!lotteries.length)
         return ctx.i18n.t('noPrizes');
-    const locale = (ctx.i18n.locale() in User_1.Locale ? ctx.i18n.locale() : 'ru');
+    const locale = ctx.i18n.locale();
     const message = lotteries.reduce((s, c) => {
         c.winners.toArray().forEach((w) => {
             s += `\n${w.check.fancyId} - ${c.prize.translation.getLocalizedLabel(locale)}`;

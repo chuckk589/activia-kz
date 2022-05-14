@@ -32,7 +32,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
         this.AppConfigService = AppConfigService;
         this.logger = logger;
         this.menu = new menu_1.Menu('reg-menu').dynamic((ctx, range) => {
-            const locale = (ctx.i18n.locale() in User_1.Locale ? ctx.i18n.locale() : 'ru');
+            const locale = ctx.i18n.locale();
             switch (ctx.session.step) {
                 case enums_1.BotStep.default: {
                     Object.values(User_1.Locale).map((lang) => range.text((0, helpers_1.label)({ text: lang }), async (ctx) => {
