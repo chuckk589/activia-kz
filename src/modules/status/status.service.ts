@@ -13,6 +13,7 @@ import i18n from '../bot/middleware/i18n';
 
 @Injectable()
 export class StatusService {
+  constructor(private readonly em: EntityManager) {}
   updateLocales(updateLocaleDto: UpdateLocaleDto) {
     const existingLocale = updateLocaleDto.ru ? 'ru' : 'uz';
     fs.writeFileSync(
@@ -27,7 +28,6 @@ export class StatusService {
       uz: JSON.parse(fs.readFileSync('./dist/modules/bot/locales/uz.json', 'utf8')),
     };
   }
-  constructor(private readonly em: EntityManager) {}
   async findAll(): Promise<Record<string, RetrieveStatusDto[]>> {
     const cities = await this.em.find(City, {}, { populate: ['translation.values'] });
     const promos = await this.em.find(Promo, {}, { populate: ['translation.values'] });

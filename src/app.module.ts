@@ -23,7 +23,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { StatusModule } from './modules/status/status.module';
 import { WinnerModule } from './modules/winner/winner.module';
 import { TelegramModule } from './telegram/telegram.module';
-import { MySqlDriver } from '@mikro-orm/mysql/MySqlDriver';
 
 @Module({
   imports: [

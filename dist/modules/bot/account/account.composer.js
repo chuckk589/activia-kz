@@ -61,7 +61,7 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
         this.photo = async (ctx) => {
             const path = await this.accountService.downloadFile(ctx);
             const check = await this.accountService.registerCheck(ctx.from.id, path);
-            await ctx.reply((0, helpers_1.checkMessageByCount)(ctx, check));
+            await ctx.reply(ctx.i18n.t('checkAccepted', { check_id: check.fancyId }));
         };
     }
 };

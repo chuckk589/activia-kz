@@ -69,6 +69,7 @@ export class AccountComposer extends BaseComposer {
   photo = async (ctx: BotContext) => {
     const path = await this.accountService.downloadFile(ctx);
     const check = await this.accountService.registerCheck(ctx.from.id, path);
-    await ctx.reply(checkMessageByCount(ctx, check));
+    await ctx.reply(ctx.i18n.t('checkAccepted', { check_id: check.fancyId }));
+    //await ctx.reply(checkMessageByCount(ctx, check));
   };
 }

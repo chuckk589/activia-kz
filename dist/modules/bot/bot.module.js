@@ -36,10 +36,6 @@ let BotModule = BotModule_1 = class BotModule {
             ContextConstructor: interfaces_1.BotContext,
         });
         options.middleware?.map((middleware) => bot.use(middleware));
-        bot.api.setMyCommands([
-            { command: 'start', description: 'Start the bot' },
-            { command: 'admin', description: 'Admin section' },
-        ]);
         bot.start();
         return bot;
     }
