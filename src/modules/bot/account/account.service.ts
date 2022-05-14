@@ -101,6 +101,7 @@ export class AccountService {
     switch (ctx.session.isRegistered) {
       case undefined: {
         const user = await this.em.findOneOrFail(User, { chatId: String(ctx.from.id) });
+        ctx.i18n.locale(user.locale);
         ctx.session.isRegistered = user.registered;
         return ctx.session.isRegistered;
       }
