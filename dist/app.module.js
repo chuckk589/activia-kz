@@ -51,7 +51,7 @@ AppModule = __decorate([
                             ? { debug: true, logger: console.log.bind(console) }
                             : {
                                 driverOptions: {
-                                    connection: { socketPath: '/var/run/mysqld/mysqld.sock' },
+                                    connection: { socketPath: '/var/lib/mysql/mysql.sock' },
                                 },
                             }),
                         entities: ['./dist/modules/mikroorm/entities/'],
