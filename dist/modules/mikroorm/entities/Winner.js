@@ -14,6 +14,7 @@ const core_1 = require("@mikro-orm/core");
 const Check_1 = require("./Check");
 const CustomBaseEntity_1 = require("./CustomBaseEntity");
 const Lottery_1 = require("./Lottery");
+const PrizeValue_1 = require("./PrizeValue");
 let Winner = class Winner extends CustomBaseEntity_1.CustomBaseEntity {
 };
 __decorate([
@@ -40,6 +41,10 @@ __decorate([
     (0, core_1.ManyToOne)(() => Check_1.Check),
     __metadata("design:type", Check_1.Check)
 ], Winner.prototype, "check", void 0);
+__decorate([
+    (0, core_1.ManyToOne)(() => PrizeValue_1.PrizeValue),
+    __metadata("design:type", PrizeValue_1.PrizeValue)
+], Winner.prototype, "prize_value", void 0);
 Winner = __decorate([
     (0, core_1.Entity)()
 ], Winner);

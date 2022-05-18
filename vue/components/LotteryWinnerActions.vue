@@ -12,7 +12,7 @@ export default {
   methods: {
     openConfigModal() {
       console.log(this.params)
-      this.params.context.componentParent.editWinner(this.params.data)
+      this.params.context.editWinner(this.params.data)
     }
   }
 }

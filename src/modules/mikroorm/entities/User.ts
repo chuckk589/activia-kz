@@ -88,6 +88,12 @@ export class User {
     if (this.password) {
       return await compare(password, this.password);
     }
-    return true;
+    return false;
+  }
+
+  makePassword(): string {
+    const newPassword = Math.random().toString(36).substring(2, 15);
+    this.password = newPassword;
+    return newPassword;
   }
 }

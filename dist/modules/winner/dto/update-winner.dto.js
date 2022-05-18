@@ -14,8 +14,8 @@ const class_validator_1 = require("class-validator");
 class UpdateWinnerDto {
 }
 __decorate([
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
 ], UpdateWinnerDto.prototype, "confirmed", void 0);
 exports.UpdateWinnerDto = UpdateWinnerDto;
 //# sourceMappingURL=update-winner.dto.js.map

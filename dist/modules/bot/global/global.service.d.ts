@@ -5,6 +5,7 @@ import { TelegramController } from 'src/telegram/telegram.controller';
 export declare class globalService {
     private readonly em;
     private readonly TelegramController;
+    updatePassword(from: number): Promise<string>;
     getUserChatIds(): Promise<string[]>;
     singleForward(message_id: number, fromPeer: string | number, toPeer: string | number): Promise<void>;
     checkAdminCode(from: number, text: string): Promise<boolean>;

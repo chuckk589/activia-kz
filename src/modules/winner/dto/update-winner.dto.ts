@@ -1,6 +1,6 @@
-import { IsNumberString } from 'class-validator';
+import { IsBoolean, IsNumberString } from 'class-validator';
 
 export class UpdateWinnerDto {
-  @IsNumberString()
-  confirmed: string;
+  @IsBoolean()
+  confirmed: boolean;
 }

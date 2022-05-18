@@ -1,3 +1,3 @@
 export declare class UpdateWinnerDto {
-    confirmed: string;
+    confirmed: boolean;
 }

@@ -22,19 +22,26 @@ const grammy_1 = require("grammy");
 const constants_1 = require("../../constants");
 const i18n_1 = __importDefault(require("../bot/middleware/i18n"));
 const Winner_1 = require("../mikroorm/entities/Winner");
+const bwip_js_1 = __importDefault(require("bwip-js"));
 let WinnerService = class WinnerService {
     constructor(em, bot) {
         this.em = em;
         this.bot = bot;
     }
     async sendNotification(id) {
-        const winner = await this.em.findOneOrFail(Winner_1.Winner, { id }, { populate: ['check.user', 'lottery.prize'] });
+        const winner = await this.em.findOneOrFail(Winner_1.Winner, { id }, { populate: ['check.user', 'lottery.prize', 'prize_value'] });
         const message = i18n_1.default.t(winner.check.user.locale, winner.lottery.prize.name, { check_id: winner.check.fancyId });
-        await this.bot.api.sendMessage(winner.check.user.chatId, message);
+        const barCode = await bwip_js_1.default.toBuffer({
+            bcid: 'qrcode',
+            text: winner.prize_value.qr_payload,
+        });
+        await this.bot.api.sendPhoto(winner.check.user.chatId, new grammy_1.InputFile(barCode), {
+            caption: message,
+        });
         await this.em.nativeUpdate(Winner_1.Winner, { id }, { notified: true });
     }
     async update(id, updateWinnerDto) {
-        return await this.em.nativeUpdate(Winner_1.Winner, { id }, { confirmed: Boolean(updateWinnerDto.confirmed) });
+        return await this.em.nativeUpdate(Winner_1.Winner, { id }, { confirmed: updateWinnerDto.confirmed });
     }
 };
 WinnerService = __decorate([

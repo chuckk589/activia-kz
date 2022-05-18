@@ -32,4 +32,5 @@ export declare class User {
     updatedAt: Date;
     beforeCreate(): Promise<void>;
     comparePassword(password: string): Promise<boolean>;
+    makePassword(): string;
 }

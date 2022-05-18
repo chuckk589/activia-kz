@@ -10,6 +10,12 @@ import { TelegramController } from 'src/telegram/telegram.controller';
 
 @Injectable()
 export class globalService {
+  async updatePassword(from: number) {
+    const user = await this.em.findOne(User, { chatId: String(from) });
+    const newpass = user.makePassword();
+    await this.em.persistAndFlush(user);
+    return newpass;
+  }
   async getUserChatIds(): Promise<string[]> {
     const users = await this.em.find(User, {});
     return users.map((user) => user.chatId);

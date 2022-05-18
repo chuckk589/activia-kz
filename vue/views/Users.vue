@@ -20,12 +20,12 @@
       </template>
 
       <template #over-table>
-        <CLink  class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems" download="table-data.csv" target="_blank">Скачать
+        <CLink  class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
       </template>
       <template #action="{ item }">
         <td>
-          <CDropdown toggler-text="Действия" class="m-2" size="sm" color="primary">
+          <CDropdown addTogglerClasses="btn-square" toggler-text="Действия" class="m-2" size="sm" color="primary">
             <CDropdownItem @click="editUser(item)">Изменить</CDropdownItem>
           </CDropdown>
         </td>

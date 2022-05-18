@@ -10,7 +10,7 @@
       <CInput v-else :label="field.label" v-model="field.value" :key="index" :type="field.type" />
     </template>
     <template #footer>
-      <CButton color="primary" @click="closeModal()">{{ mData.footer }}</CButton>
+      <CButton shape="square" color="primary" @click="closeModal()">{{ mData.footer }}</CButton>
     </template>
   </CModal>
 </template>

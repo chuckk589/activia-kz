@@ -19,7 +19,7 @@
             :is-valid="isValid"
           />
         </CForm>
-        <CButton class="w-100 btn btn-lg" color="primary" @click="auth"
+        <CButton shape="square" class="w-100 btn btn-lg" color="primary" @click="auth"
           >Войти</CButton
         >
       </CCardBody>

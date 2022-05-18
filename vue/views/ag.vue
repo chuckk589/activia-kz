@@ -12,9 +12,10 @@
                 </div>
             </template>
         </CExtendedModal>
-        <ag-grid-vue :context="context" style="width: 100%; height: 100vh;" class="ag-theme-alpine"
+        <ag-grid-vue @someEvent="tst" style="width: 100%; height: 100vh;" class="ag-theme-alpine"
             :columnDefs="columnDefs" @grid-ready="onGridReady" :defaultColDef="defaultColDef" :masterDetail="true"
-            :getRowId="getRowId" :detailCellRendererParams="detailCellRendererParams" :rowData="rowData">
+            :embedFullWidthRows="true" :animateRows="true" :getRowId="getRowId"
+            :detailCellRendererParams="detailCellRendererParams" :rowData="rowData">
         </ag-grid-vue>
     </div>
 </template>
@@ -26,7 +27,7 @@ import LotteryWinnerActions from '../components/LotteryWinnerActions.vue'
 import CExtendedModal from '../components/table/CExtendedModal.vue'
 
 export default {
-    name: "a",
+    name: "aaxa",
     data() {
         return {
             modalConfig: {
@@ -46,13 +47,11 @@ export default {
                     field: 'action',
                     headerName: '',
                     cellRenderer: 'LotteryActions',
-                    colId: 'action',
                 },
 
             ],
             gridApi: null,
             columnApi: null,
-            context: {},
             defaultColDef: {
                 flex: 1,
             },
@@ -73,6 +72,10 @@ export default {
                             field: 'action',
                             headerName: '',
                             cellRenderer: 'LotteryWinnerActions',
+                            cellRendererParams: {
+                                context: this,
+                                lol:228
+                            },
                         },
                     ],
                     defaultColDef: {
@@ -93,9 +96,7 @@ export default {
         CExtendedModal
     },
     beforeMount() {
-        this.context = {
-            componentParent: this
-        }
+       //this.context = { componentParent: this };
     },
     methods: {
         editLottery(rowData) {
@@ -165,8 +166,8 @@ export default {
     },
 };
 </script>
-<style >
-.ag-theme-alpine .ag-details-row {
+<style scoped>
+>>>.ag-theme-alpine .ag-details-row {
     padding: 10px;
 }
 

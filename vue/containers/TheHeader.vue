@@ -18,7 +18,7 @@
     </CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3">
-        <CButton @click="logout" size="sm" color="primary">
+        <CButton shape="square" @click="logout" size="sm" color="primary">
           Logout
         </CButton>
       </CHeaderNavItem>

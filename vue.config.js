@@ -12,7 +12,7 @@ module.exports = {
   },
   transpileDependencies: ['@coreui/utils', '@coreui/vue-pro'],
   devServer: {
-    https: true,
+    //https: true,
     proxy: {
       '^/': {
         target: 'http://localhost:3000',

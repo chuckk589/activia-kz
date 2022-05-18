@@ -1,7 +1,8 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, ManyToOne, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Check } from './Check';
 import { CustomBaseEntity } from './CustomBaseEntity';
 import { Lottery } from './Lottery';
+import { PrizeValue } from './PrizeValue';
 
 @Entity()
 export class Winner extends CustomBaseEntity {
@@ -22,4 +23,7 @@ export class Winner extends CustomBaseEntity {
 
   @ManyToOne(() => Check)
   check!: Check;
+
+  @ManyToOne(() => PrizeValue)
+  prize_value!: PrizeValue;
 }

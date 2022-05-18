@@ -70,6 +70,5 @@ export class AccountComposer extends BaseComposer {
     const path = await this.accountService.downloadFile(ctx);
     const check = await this.accountService.registerCheck(ctx.from.id, path);
     await ctx.reply(ctx.i18n.t('checkAccepted', { check_id: check.fancyId }));
-    //await ctx.reply(checkMessageByCount(ctx, check));
   };
 }

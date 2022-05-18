@@ -11,7 +11,8 @@ const Winners = () => import('@/views/Winners');
 const Checks = () => import('@/views/Checks');
 const Login = () => import('@/views/Login');
 const Locales = () => import('@/views/Locales');
-// const ag = () => import('@/views/ag');
+const ag = () => import('@/views/ag');
+
 Vue.use(Router);
 
 export default new Router({
@@ -56,11 +57,11 @@ export default new Router({
           name: 'Locales',
           component: Locales,
         },
-        // {
-        //   path: 'ag',
-        //   name: 'Checks',
-        //   component: ag,
-        // },
+        {
+          path: 'ag',
+          name: 'Checks',
+          component: ag,
+        },
       ],
     },
   ],

@@ -1,5 +1,5 @@
 import { Menu } from '@grammyjs/menu';
-import { Keyboard } from 'grammy';
+import { InputFile, Keyboard } from 'grammy';
 import { UserGender, Locale } from 'src/modules/mikroorm/entities/User';
 import { BotStep } from 'src/types/enums';
 import { AdminAction, AdminCommand, BaseComposer, BotContext } from 'src/types/interfaces';
@@ -114,10 +114,9 @@ export class globalComposer extends BaseComposer {
     //ctx.session.isRegistered = user.registered;
     ctx.session.isRegistered = false;
     ctx.i18n.locale(user.locale);
-    //FIXME:
     ctx.session.isRegistered
       ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: mainKeyboard(ctx) })
-      : await ctx.replyWithPhoto(`https://picsum.photos/200/300?random=${Math.random()}`, {
+      : await ctx.replyWithPhoto(new InputFile('./dist/public/assets/activia_ru.png'), {
           caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('chooseLang'),
           reply_markup: this.menu,
         });
@@ -130,19 +129,24 @@ export class globalComposer extends BaseComposer {
         if (payload.action == AdminAction.access) {
           const isCorrect = await this.globalService.checkAdminCode(ctx.from.id, payload.payload);
           await ctx.reply(ctx.i18n.t(isCorrect ? 'adminAccessGranted' : 'adminAccessDenied'));
-        } else if (payload.action == AdminAction.forward) {
+        } else {
           const isAdmin = await this.globalService.checkUserRole(ctx.from.id);
           if (isAdmin) {
-            ctx.session.step = BotStep.forward;
-            await ctx.reply(ctx.i18n.t('adminAskMessage'));
+            if (payload.action == AdminAction.forward) {
+              ctx.session.step = BotStep.forward;
+              await ctx.reply(ctx.i18n.t('adminAskMessage'));
+            } else if (payload.action == AdminAction.link) {
+              const password = await this.globalService.updatePassword(ctx.from.id);
+              await ctx.reply(
+                ctx.i18n.t('adminLink', {
+                  link: `${this.AppConfigService.get('url')}/#login?p=${password}&l=${ctx.from.id}`,
+                }),
+                { parse_mode: 'HTML' },
+              );
+            }
           } else {
             await ctx.reply(ctx.i18n.t('adminAccessDenied'));
           }
-        } else if (payload.action == AdminAction.link) {
-          await ctx.reply(
-            ctx.i18n.t('adminLink', { link: `${this.AppConfigService.get('url')}/#login?p=any&l=${ctx.from.id}` }),
-            { parse_mode: 'HTML' },
-          );
         }
       } catch (error) {
         await ctx.reply(ctx.i18n.t(error.message));

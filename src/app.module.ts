@@ -37,11 +37,16 @@ import { TelegramModule } from './telegram/telegram.module';
             ? { debug: true, logger: console.log.bind(console) }
             : {
                 driverOptions: {
-                  connection: { socketPath: '/var/lib/mysql/mysql.sock' },
+                  connection: { socketPath: '/var/run/mysqld/mysqld.sock' },
                 },
               }),
           entities: ['./dist/modules/mikroorm/entities/'],
           entitiesTs: ['./src/modules/mikroorm/entities/'],
+          // host: configService.get('DB_HOST', { infer: true }),
+          // port: 3306,
+          // dbName: configService.get('DB_NAME', { infer: true }),
+          // user: configService.get('DB_USER', { infer: true }),
+          // password: configService.get('DB_PASSWORD', { infer: true }),
           clientUrl: configService.get('database', { infer: true }),
         };
       },

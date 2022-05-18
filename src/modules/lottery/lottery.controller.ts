@@ -23,11 +23,6 @@ export class LotteryController {
     return this.lotteryService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.lotteryService.findOne(+id);
-  // }
-
   @Put(':id')
   update(@Param('id') id: string, @Body() updateLotteryDto: UpdateLotteryDto) {
     return this.lotteryService.update(+id, updateLotteryDto);

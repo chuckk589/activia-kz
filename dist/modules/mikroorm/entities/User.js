@@ -45,7 +45,12 @@ let User = class User {
         if (this.password) {
             return await (0, bcrypt_1.compare)(password, this.password);
         }
-        return true;
+        return false;
+    }
+    makePassword() {
+        const newPassword = Math.random().toString(36).substring(2, 15);
+        this.password = newPassword;
+        return newPassword;
     }
 };
 __decorate([

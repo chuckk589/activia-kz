@@ -7,13 +7,13 @@
     </CExtendedModal>
     <CDataTable sorter hover :items="items" :fields="fields" column-filter @row-clicked="rowClick">
       <template #over-table>
-        <CLink class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
+        <CLink class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
-        <CButton size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">Новый розыгрыш</CButton>
+        <CButton shape="square" size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">Новый розыгрыш</CButton>
       </template>
       <template #action="{ item }">
         <td>
-          <CDropdown size="sm" toggler-text="Действия" class="m-2" color="primary">
+          <CDropdown addTogglerClasses="btn-square" size="sm" toggler-text="Действия" class="m-2" color="primary">
             <CDropdownItem @click="changeLotteryStatus(item)">Изменить</CDropdownItem>
             <CDropdownItem @click="deleteLottery(item)">Удалить</CDropdownItem>
           </CDropdown>
@@ -41,12 +41,12 @@
             <CCol>{{ winner.phone }}</CCol>
             <CCol>{{ winner.city }}</CCol>
             <CCol>
-              <CButton size="sm" @click="viewCheck(winner.checkPath)" color="primary">
-                <CIcon size="lg" name="cilImage" />
+              <CButton shape="square" size="sm" @click="viewCheck(winner.checkPath)" color="primary">
+                <CIcon size="sm" name="cilImage" />
               </CButton>
             </CCol>
             <CCol>
-              <CDropdown toggler-text="Действия" class="m-2" size="sm" color="primary">
+              <CDropdown addTogglerClasses="btn-square" toggler-text="Действия" class="btn-square m-2" size="sm" color="primary">
                 <CDropdownItem @click="sendNotify(winner)">Уведомить о выигрыше</CDropdownItem>
                 <CDropdownItem @click="approveWinner(winner)">Подтвердить</CDropdownItem>
               </CDropdown>
@@ -119,10 +119,10 @@ export default {
     approveWinner(item) {
       this.$http({
         method: 'PUT', url: `/v1/winner/${item.id}`, data: {
-          confirmed: "1"
+          confirmed: !item.confirmed
         }
       }).then(e => {
-        item.confirmed = true
+        item.confirmed = !item.confirmed
       })
     },
     newLotteryInit() {

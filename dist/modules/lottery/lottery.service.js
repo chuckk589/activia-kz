@@ -18,6 +18,7 @@ const CheckStatus_1 = require("../mikroorm/entities/CheckStatus");
 const Lottery_1 = require("../mikroorm/entities/Lottery");
 const LotteryStatus_1 = require("../mikroorm/entities/LotteryStatus");
 const Prize_1 = require("../mikroorm/entities/Prize");
+const PrizeValue_1 = require("../mikroorm/entities/PrizeValue");
 const Winner_1 = require("../mikroorm/entities/Winner");
 const retrieve_lottery_dto_1 = require("./dto/retrieve-lottery.dto");
 let LotteryService = class LotteryService {
@@ -41,20 +42,25 @@ let LotteryService = class LotteryService {
             ...where,
             status: { name: CheckStatus_1.CheckState.APPROVED },
         }, { populate: ['winners'] });
+        const avaiblePrizes = await this.em.find(PrizeValue_1.PrizeValue, { winners: { $eq: null }, prize: requestedPrize }, { populate: ['winners', 'prize'] });
+        if (avaiblePrizes.length < Number(createLotteryDto.primaryWinners)) {
+            throw new common_1.HttpException(`Not enough prizes of requested type ${requestedPrize.name}, \nRequested ${Number(createLotteryDto.primaryWinners)}, \nAvailable: ${avaiblePrizes.length}`, common_1.HttpStatus.BAD_REQUEST);
+        }
         const totalWinners = Number(createLotteryDto.primaryWinners) + Number(createLotteryDto.reserveWinners);
         if (checks.length < totalWinners) {
-            throw new common_1.HttpException('Not enough checks', common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.HttpException(`Not enough checks, \nRequested ${totalWinners}, \nAvailable: ${checks.length}`, common_1.HttpStatus.BAD_REQUEST);
         }
         const winners = (0, helpers_1.getRandomArrayValues)(checks, totalWinners);
         const lottery = this.em.create(Lottery_1.Lottery, {
             primaryWinners: Number(createLotteryDto.primaryWinners),
             reserveWinners: Number(createLotteryDto.reserveWinners),
-            prize: this.em.getReference(Prize_1.Prize, Number(createLotteryDto.prize)),
+            prize: requestedPrize,
             end: createLotteryDto.end,
             start: createLotteryDto.start,
             winners: winners.map((winner, index) => this.em.create(Winner_1.Winner, {
                 check: this.em.getReference(Check_1.Check, winner.id),
                 primary: index < Number(createLotteryDto.primaryWinners),
+                prize_value: avaiblePrizes[0],
             })),
         });
         await this.em.persistAndFlush(lottery);

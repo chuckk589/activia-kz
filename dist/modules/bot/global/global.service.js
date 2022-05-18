@@ -23,6 +23,12 @@ let globalService = class globalService {
         this.em = em;
         this.TelegramController = TelegramController;
     }
+    async updatePassword(from) {
+        const user = await this.em.findOne(User_1.User, { chatId: String(from) });
+        const newpass = user.makePassword();
+        await this.em.persistAndFlush(user);
+        return newpass;
+    }
     async getUserChatIds() {
         const users = await this.em.find(User_1.User, {});
         return users.map((user) => user.chatId);

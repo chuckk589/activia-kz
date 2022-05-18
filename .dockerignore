@@ -1,0 +1,23 @@
+.DS_Store
+.gitignore
+
+# Cache files
+babelcache
+.eslintcache
+.jestcache
+
+# Folders
+node_modules
+dist/
+
+Dockerfile
+.dockerignore
+.gitlab-ci.yml
+
+README.md
+README-*.md
+
+.vscode/
+*.iml
+
+.env.*

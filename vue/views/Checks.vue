@@ -8,13 +8,13 @@
     <CDataTable :items="items" :fields="fields" pagination sorter itemsPerPageSelect column-filter>
       <template #action="{ item }">
         <td>
-          <CButton @click="viewCheck(item)" size="sm" color="primary">
-            <CIcon size="lg" name="cilImage" />
+          <CButton shape="square" @click="viewCheck(item)" size="sm" color="primary">
+            <CIcon size="sm" name="cilImage" />
           </CButton>
         </td>
       </template>
       <template #over-table>
-        <CLink class="btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
+        <CLink class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
           (.csv)</CLink>
       </template>
     </CDataTable>

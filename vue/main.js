@@ -8,6 +8,9 @@ import router from './router/index';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import axios from 'axios';
+import { LicenseManager } from 'ag-grid-enterprise';
+import 'ag-grid-enterprise';
+LicenseManager.setLicenseKey('[v228]__MTUwNDA0NzYwMDAwMA==b6ad7a19dbec1f3b7ba7f0245269f807');
 
 Vue.use(VueMeta);
 Vue.use(CoreuiVuePro);

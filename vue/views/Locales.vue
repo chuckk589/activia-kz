@@ -15,11 +15,11 @@
         </CTabs>
       </CCardBody>
       <CCardFooter>
-        <CLoadingButton disabled-on-loading :loading="submitting" @click.native="update()" size="sm" color="primary"
+        <CLoadingButton shape="square" disabled-on-loading :loading="submitting" @click.native="update()" size="sm" color="primary"
           style="margin-right:5px;">
           Применить
         </CLoadingButton>
-        <CLoadingButton disabled-on-loading :loading="cancelling" @click.native="load()" size="sm" color="danger">
+        <CLoadingButton shape="square" disabled-on-loading :loading="cancelling" @click.native="load()" size="sm" color="danger">
           Сбросить
         </CLoadingButton>
       </CCardFooter>
