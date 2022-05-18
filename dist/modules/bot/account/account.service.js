@@ -41,7 +41,7 @@ let AccountService = class AccountService {
                 check: { status: { name: CheckStatus_1.CheckState.APPROVED } },
             },
             status: { name: LotteryStatus_1.LotteryState.ENDED },
-        }, { populate: ['prize.translation', 'winners.check', 'winners.check.user'] });
+        }, { populate: ['prize.translation.values', 'winners.check', 'winners.check.user'] });
         return lotteries.map((l) => new Lottery_1.BotLotteryDto(l, ctx.i18n.locale()));
     }
     async getUserLotteries(ctx) {
@@ -51,7 +51,7 @@ let AccountService = class AccountService {
                 check: { user: { chatId: String(ctx.from.id) }, status: { name: CheckStatus_1.CheckState.APPROVED } },
             },
             status: { name: LotteryStatus_1.LotteryState.ENDED },
-        }, { populate: ['prize.translation', 'winners.check'] });
+        }, { populate: ['prize.translation.values', 'winners.check'] });
         return lotteries;
     }
     async getUserChecks(ctx) {

@@ -30,7 +30,7 @@ export class AccountService {
         },
         status: { name: LotteryState.ENDED },
       },
-      { populate: ['prize.translation', 'winners.check', 'winners.check.user'] },
+      { populate: ['prize.translation.values', 'winners.check', 'winners.check.user'] },
     );
     return lotteries.map((l) => new BotLotteryDto(l, ctx.i18n.locale() as Locale));
   }
@@ -44,7 +44,7 @@ export class AccountService {
         },
         status: { name: LotteryState.ENDED },
       },
-      { populate: ['prize.translation', 'winners.check'] },
+      { populate: ['prize.translation.values', 'winners.check'] },
     );
     return lotteries;
   }
