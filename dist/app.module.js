@@ -34,6 +34,7 @@ const auth_module_1 = require("./modules/auth/auth.module");
 const status_module_1 = require("./modules/status/status.module");
 const winner_module_1 = require("./modules/winner/winner.module");
 const telegram_module_1 = require("./telegram/telegram.module");
+const prize_value_module_1 = require("./modules/prize-value/prize-value.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -81,6 +82,7 @@ AppModule = __decorate([
             status_module_1.StatusModule,
             winner_module_1.WinnerModule,
             telegram_module_1.TelegramModule,
+            prize_value_module_1.PrizeValueModule,
         ],
         controllers: [],
         providers: [],

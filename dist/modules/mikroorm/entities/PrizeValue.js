@@ -27,7 +27,7 @@ __decorate([
     __metadata("design:type", String)
 ], PrizeValue.prototype, "qr_payload", void 0);
 __decorate([
-    (0, core_1.ManyToOne)(() => Prize_1.Prize, { mapToPk: true }),
+    (0, core_1.ManyToOne)(() => Prize_1.Prize),
     __metadata("design:type", Prize_1.Prize)
 ], PrizeValue.prototype, "prize", void 0);
 __decorate([

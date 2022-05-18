@@ -23,6 +23,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { StatusModule } from './modules/status/status.module';
 import { WinnerModule } from './modules/winner/winner.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { PrizeValueModule } from './modules/prize-value/prize-value.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { TelegramModule } from './telegram/telegram.module';
     StatusModule,
     WinnerModule,
     TelegramModule,
+    PrizeValueModule,
   ],
   controllers: [],
   providers: [],

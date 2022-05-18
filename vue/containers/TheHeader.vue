@@ -15,6 +15,11 @@
           Locales
         </CHeaderNavLink>
       </CHeaderNavItem>
+      <CHeaderNavItem class="px-3">
+        <CHeaderNavLink to="/prizes">
+          Prizes
+        </CHeaderNavLink>
+      </CHeaderNavItem>
     </CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3">
@@ -22,23 +27,6 @@
           Logout
         </CButton>
       </CHeaderNavItem>
-      <!-- <CHeaderNavItem class="px-3">
-        <button
-          @click="() => $store.commit('toggle', 'darkMode')"
-          class="c-header-nav-btn"
-        >
-          <CIcon v-if="$store.state.darkMode" name="cil-sun"/>
-          <CIcon v-else name="cil-moon"/>
-        </button>
-      </CHeaderNavItem> -->
-      <!-- <CHeaderNavItem class="px-3">
-        <button
-          class="c-header-nav-btn"
-          @click="$store.commit('toggle', 'asideShow')"
-        >
-          <CIcon size="lg" name="cil-applications-settings" class="mr-2"/>
-        </button>
-      </CHeaderNavItem> -->
     </CHeaderNav>
 
     <CSubheader class="px-3">

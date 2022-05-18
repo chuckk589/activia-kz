@@ -10,7 +10,7 @@ export class PrizeValue {
   @Property({ length: 255, nullable: true })
   qr_payload!: string;
 
-  @ManyToOne(() => Prize, { mapToPk: true })
+  @ManyToOne(() => Prize)
   prize!: Prize;
 
   @OneToMany(() => Winner, (winner) => winner.prize_value)
