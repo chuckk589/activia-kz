@@ -35,7 +35,7 @@ let UserService = class UserService {
             ...(updateUserDto.promo ? { promo: this.em.getReference(Promo_1.Promo, Number(updateUserDto.promo)) } : {}),
             ...(updateUserDto.phone ? { phone: updateUserDto.phone } : {}),
             ...(updateUserDto.role ? { role: updateUserDto.role } : {}),
-            ...(updateUserDto.registered ? { registered: Boolean(updateUserDto.registered) } : {}),
+            ...('registered' in updateUserDto ? { registered: Boolean(updateUserDto.registered) } : {}),
         });
     }
 };
