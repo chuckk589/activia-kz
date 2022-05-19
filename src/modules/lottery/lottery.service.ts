@@ -17,6 +17,15 @@ import { UpdateLotteryDto } from './dto/update-lottery.dto';
 export class LotteryService {
   constructor(private readonly em: EntityManager) {}
   async create(createLotteryDto: CreateLotteryDto): Promise<RetrieveLotteryDto> {
+    //should be at least equal
+    if (createLotteryDto.primaryWinners < createLotteryDto.reserveWinners) {
+      throw new HttpException(
+        `Number of primaryWinners should bot be less than reserveWiners , \nPrimary: ${Number(
+          createLotteryDto.primaryWinners,
+        )}, \nReserved: ${createLotteryDto.reserveWinners}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const requestedPrize = await this.em.findOne(Prize, { id: Number(createLotteryDto.prize) });
     const where = {
       ...(requestedPrize.name == 'PRIZE_WEEKLY'
@@ -43,17 +52,17 @@ export class LotteryService {
     //     prize: this.em.getReference(Prize, 1),
     //   });
     // }
-    const avaiblePrizes = await this.em.find(
+    const avaivablePrizes = await this.em.find(
       PrizeValue,
       { winners: { $eq: null }, prize: requestedPrize },
       { populate: ['winners', 'prize'] },
     );
 
-    if (avaiblePrizes.length < Number(createLotteryDto.primaryWinners)) {
+    if (avaivablePrizes.length < Number(createLotteryDto.primaryWinners)) {
       throw new HttpException(
         `Not enough prizes of requested type ${requestedPrize.name}, \nRequested ${Number(
           createLotteryDto.primaryWinners,
-        )}, \nAvailable: ${avaiblePrizes.length}`,
+        )}, \nAvailable: ${avaivablePrizes.length}`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -76,7 +85,7 @@ export class LotteryService {
         this.em.create(Winner, {
           check: this.em.getReference(Check, winner.id),
           primary: index < Number(createLotteryDto.primaryWinners),
-          prize_value: avaiblePrizes[0],
+          prize_value: avaivablePrizes[index % Number(createLotteryDto.primaryWinners)],
         }),
       ),
     });
