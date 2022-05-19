@@ -34,6 +34,9 @@ let AccountService = class AccountService {
         this.AppConfigService = AppConfigService;
         this.logger = logger;
     }
+    async updateUser(from, options) {
+        await this.em.nativeUpdate(User_1.User, { chatId: String(from) }, options);
+    }
     async getLotteries(ctx) {
         const lotteries = await this.em.find(Lottery_1.Lottery, {
             winners: {

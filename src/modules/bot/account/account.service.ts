@@ -20,6 +20,9 @@ export class AccountService {
     private readonly AppConfigService: AppConfigService,
     @InjectPinoLogger('AccountService') private readonly logger: PinoLogger,
   ) {}
+  async updateUser(from: number, options: Partial<User>) {
+    await this.em.nativeUpdate(User, { chatId: String(from) }, options);
+  }
   async getLotteries(ctx: BotContext): Promise<BotLotteryDto[]> {
     const lotteries = await this.em.find(
       Lottery,

@@ -5,6 +5,8 @@ import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Menu } from '@grammyjs/menu';
 import { checkMessageByCount, label, prizeMessage, prizeMessageWeek, winnersMessage } from '../common/helpers';
 import { InlineKeyboard, InputFile } from 'grammy';
+import { Locale } from 'src/modules/mikroorm/entities/User';
+import { mainKeyboard } from '../common/keyboards';
 
 @ComposerController
 export class AccountComposer extends BaseComposer {
@@ -25,6 +27,18 @@ export class AccountComposer extends BaseComposer {
         await ctx.reply(prizeMessageWeek(ctx, week));
       });
     });
+  });
+
+  @Use(undefined, 'filter')
+  lang = new Menu<BotContext>('lang-menu').dynamic((ctx, range) => {
+    Object.values(Locale).map((lang) =>
+      range.text(label({ text: lang }), async (ctx) => {
+        await this.accountService.updateUser(ctx.from.id, { locale: lang as Locale });
+        ctx.i18n.locale(lang);
+        await ctx.deleteMessage();
+        await ctx.reply(ctx.i18n.t('languageChanged'), { reply_markup: mainKeyboard(ctx) });
+      }),
+    );
   });
 
   @Hears('participate', 'filter')
@@ -70,6 +84,11 @@ export class AccountComposer extends BaseComposer {
   //   });
   //   // await ctx.reply(prizeMessage(ctx, lotteries));
   // };
+
+  @Hears('switchLanguage', 'filter')
+  switchLanguage = async (ctx: BotContext) => {
+    await ctx.reply(ctx.i18n.t('chooseLang'), { reply_markup: this.lang });
+  };
 
   @Hears('winners', 'filter')
   winners = async (ctx: BotContext) => {

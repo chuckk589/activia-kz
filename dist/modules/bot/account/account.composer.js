@@ -17,6 +17,8 @@ const app_config_service_1 = require("../../app-config/app-config.service");
 const menu_1 = require("@grammyjs/menu");
 const helpers_1 = require("../common/helpers");
 const grammy_1 = require("grammy");
+const User_1 = require("../../mikroorm/entities/User");
+const keyboards_1 = require("../common/keyboards");
 let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
     constructor(accountService, AppConfigService) {
         super();
@@ -33,6 +35,14 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
                     await ctx.reply((0, helpers_1.prizeMessageWeek)(ctx, week));
                 });
             });
+        });
+        this.lang = new menu_1.Menu('lang-menu').dynamic((ctx, range) => {
+            Object.values(User_1.Locale).map((lang) => range.text((0, helpers_1.label)({ text: lang }), async (ctx) => {
+                await this.accountService.updateUser(ctx.from.id, { locale: lang });
+                ctx.i18n.locale(lang);
+                await ctx.deleteMessage();
+                await ctx.reply(ctx.i18n.t('languageChanged'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) });
+            }));
         });
         this.takePart = async (ctx) => {
             await ctx.reply(ctx.i18n.t('participateDetails'));
@@ -53,6 +63,9 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
                 caption: ctx.i18n.t('prizesContent'),
             });
             await ctx.reply((0, helpers_1.prizeMessage)(ctx, lotteries));
+        };
+        this.switchLanguage = async (ctx) => {
+            await ctx.reply(ctx.i18n.t('chooseLang'), { reply_markup: this.lang });
         };
         this.winners = async (ctx) => {
             ctx.session.winners = await this.accountService.getLotteries(ctx);
@@ -80,6 +93,10 @@ __decorate([
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "menu", void 0);
 __decorate([
+    (0, decorators_1.Use)(undefined, 'filter'),
+    __metadata("design:type", Object)
+], AccountComposer.prototype, "lang", void 0);
+__decorate([
     (0, decorators_1.Hears)('participate', 'filter'),
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "takePart", void 0);
@@ -99,6 +116,10 @@ __decorate([
     (0, decorators_1.Hears)('prizes', 'filter'),
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "myPrizes", void 0);
+__decorate([
+    (0, decorators_1.Hears)('switchLanguage', 'filter'),
+    __metadata("design:type", Object)
+], AccountComposer.prototype, "switchLanguage", void 0);
 __decorate([
     (0, decorators_1.Hears)('winners', 'filter'),
     __metadata("design:type", Object)

@@ -8,11 +8,13 @@ export declare class AccountComposer extends BaseComposer {
     constructor(accountService: AccountService, AppConfigService: AppConfigService);
     filter: (ctx: BotContext) => Promise<boolean>;
     menu: Menu<BotContext>;
+    lang: Menu<BotContext>;
     takePart: (ctx: BotContext) => Promise<void>;
     about: (ctx: BotContext) => Promise<void>;
     contactUs: (ctx: BotContext) => Promise<void>;
     myChecks: (ctx: BotContext) => Promise<void>;
     myPrizes: (ctx: BotContext) => Promise<void>;
+    switchLanguage: (ctx: BotContext) => Promise<void>;
     winners: (ctx: BotContext) => Promise<void>;
     rules: (ctx: BotContext) => Promise<void>;
     photo: (ctx: BotContext) => Promise<void>;

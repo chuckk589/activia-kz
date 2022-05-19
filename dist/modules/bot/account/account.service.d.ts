@@ -9,6 +9,7 @@ export declare class AccountService {
     private readonly AppConfigService;
     private readonly logger;
     constructor(em: EntityManager, AppConfigService: AppConfigService, logger: PinoLogger);
+    updateUser(from: number, options: Partial<User>): Promise<void>;
     getLotteries(ctx: BotContext): Promise<BotLotteryDto[]>;
     getUserLotteries(ctx: BotContext): Promise<Lottery[]>;
     getUserChecks(ctx: BotContext): Promise<string>;

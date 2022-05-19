@@ -12,7 +12,8 @@ const mainKeyboard = (ctx) => {
         .text(ctx.i18n.t('prizes'))
         .text(ctx.i18n.t('winners'))
         .row()
-        .text(ctx.i18n.t('contacts'));
+        .text(ctx.i18n.t('contacts'))
+        .text(ctx.i18n.t('switchLanguage'));
 };
 exports.mainKeyboard = mainKeyboard;
 //# sourceMappingURL=keyboards.js.map
