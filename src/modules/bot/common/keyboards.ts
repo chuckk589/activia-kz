@@ -11,7 +11,7 @@ export const mainKeyboard = (ctx: BotContext): Keyboard => {
     .text(ctx.i18n.t('about'))
     .row()
     .text(ctx.i18n.t('myChecks'))
-    .text(ctx.i18n.t('myPrizes'))
+    .text(ctx.i18n.t('prizes'))
     .text(ctx.i18n.t('winners'))
     .row()
     .text(ctx.i18n.t('contacts'));

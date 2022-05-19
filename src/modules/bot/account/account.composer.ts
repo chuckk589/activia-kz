@@ -4,6 +4,7 @@ import { AccountService } from './account.service';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Menu } from '@grammyjs/menu';
 import { checkMessageByCount, label, prizeMessage, prizeMessageWeek, winnersMessage } from '../common/helpers';
+import { InlineKeyboard, InputFile } from 'grammy';
 
 @ComposerController
 export class AccountComposer extends BaseComposer {
@@ -47,11 +48,28 @@ export class AccountComposer extends BaseComposer {
     await ctx.reply(message);
   };
 
-  @Hears('myPrizes', 'filter')
+  @Hears('prizes', 'filter')
   myPrizes = async (ctx: BotContext) => {
     const lotteries = await this.accountService.getUserLotteries(ctx);
+    await ctx.replyWithPhoto(new InputFile(`./dist/public/assets/prizes_${ctx.i18n.locale()}.png`), {
+      caption: ctx.i18n.t('prizesContent'),
+    });
     await ctx.reply(prizeMessage(ctx, lotteries));
+    // await ctx.reply(prizeMessage(ctx, lotteries));
   };
+  // @Hears('prizes', 'filter')
+  // Prizes = async (ctx: BotContext) => {
+  //   const lotteries = await this.accountService.getUserLotteries(ctx);
+  //   console.log(prizeMessage(ctx, lotteries));
+  //   const other = lotteries.length
+  //     ? { reply_markup: new InlineKeyboard().text(ctx.i18n.t('myPrizes'), prizeMessage(ctx, lotteries)) }
+  //     : {};
+  //   await ctx.replyWithPhoto(new InputFile(`./dist/public/assets/prizes_${ctx.i18n.locale()}.png`), {
+  //     caption: ctx.i18n.t('prizesContent'),
+  //     ...other,
+  //   });
+  //   // await ctx.reply(prizeMessage(ctx, lotteries));
+  // };
 
   @Hears('winners', 'filter')
   winners = async (ctx: BotContext) => {
@@ -62,7 +80,9 @@ export class AccountComposer extends BaseComposer {
   @Hears('rules', 'filter')
   rules = async (ctx: BotContext) => {
     const url = this.AppConfigService.get('url');
-    await ctx.reply(ctx.i18n.t('getRules', { link: url + '/assets/rules.pdf' }), { parse_mode: 'HTML' });
+    await ctx.reply(ctx.i18n.t('getRules', { link: url + `/assets/rules_${ctx.i18n.locale()}.pdf` }), {
+      parse_mode: 'HTML',
+    });
   };
 
   @On(':photo', 'filter')

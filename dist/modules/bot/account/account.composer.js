@@ -16,6 +16,7 @@ const account_service_1 = require("./account.service");
 const app_config_service_1 = require("../../app-config/app-config.service");
 const menu_1 = require("@grammyjs/menu");
 const helpers_1 = require("../common/helpers");
+const grammy_1 = require("grammy");
 let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
     constructor(accountService, AppConfigService) {
         super();
@@ -48,6 +49,9 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
         };
         this.myPrizes = async (ctx) => {
             const lotteries = await this.accountService.getUserLotteries(ctx);
+            await ctx.replyWithPhoto(new grammy_1.InputFile(`./dist/public/assets/prizes_${ctx.i18n.locale()}.png`), {
+                caption: ctx.i18n.t('prizesContent'),
+            });
             await ctx.reply((0, helpers_1.prizeMessage)(ctx, lotteries));
         };
         this.winners = async (ctx) => {
@@ -56,7 +60,9 @@ let AccountComposer = class AccountComposer extends interfaces_1.BaseComposer {
         };
         this.rules = async (ctx) => {
             const url = this.AppConfigService.get('url');
-            await ctx.reply(ctx.i18n.t('getRules', { link: url + '/assets/rules.pdf' }), { parse_mode: 'HTML' });
+            await ctx.reply(ctx.i18n.t('getRules', { link: url + `/assets/rules_${ctx.i18n.locale()}.pdf` }), {
+                parse_mode: 'HTML',
+            });
         };
         this.photo = async (ctx) => {
             const path = await this.accountService.downloadFile(ctx);
@@ -90,7 +96,7 @@ __decorate([
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "myChecks", void 0);
 __decorate([
-    (0, decorators_1.Hears)('myPrizes', 'filter'),
+    (0, decorators_1.Hears)('prizes', 'filter'),
     __metadata("design:type", Object)
 ], AccountComposer.prototype, "myPrizes", void 0);
 __decorate([

@@ -10,6 +10,7 @@ import { Router } from '@grammyjs/router';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { mainKeyboard } from '../common/keyboards';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import i18n from '../middleware/i18n';
 
 @ComposerController
 export class globalComposer extends BaseComposer {
@@ -31,7 +32,8 @@ export class globalComposer extends BaseComposer {
             await this.globalService.updateUser(ctx.from.id, { locale: lang as Locale });
             ctx.i18n.locale(lang);
             ctx.session.step = BotStep.age;
-            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askAge') });
+            //await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askAge') });
+            await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askAge'));
           }),
         );
         break;
@@ -39,7 +41,8 @@ export class globalComposer extends BaseComposer {
       case BotStep.age: {
         range.text(label({ text: 'yes' }), async (ctx) => {
           ctx.session.step = BotStep.gender;
-          await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender') });
+          // await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender') });
+          await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender'));
         });
         range.text(label({ text: 'no' }), async (ctx) => {
           ctx.session.step = BotStep.default;
@@ -52,7 +55,8 @@ export class globalComposer extends BaseComposer {
         Object.values(UserGender).map((gender) => {
           range.text(label({ text: gender }), async (ctx) => {
             ctx.session.step = BotStep.city;
-            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
+            //await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
+            await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity'));
           });
         });
         break;
@@ -62,7 +66,7 @@ export class globalComposer extends BaseComposer {
           range.text(label({ text: city.translation[locale] }), async (ctx) => {
             ctx.session.step = BotStep.promo;
             await this.globalService.updateCity(ctx.from.id, city.id);
-            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
+            await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo'));
           }),
             index % 3 === 0 && range.row();
         });
@@ -110,16 +114,26 @@ export class globalComposer extends BaseComposer {
   start = async (ctx: BotContext) => {
     ctx.session.step = BotStep.default;
     const user = await this.globalService.getUser(ctx);
-    //FIXME:
-    //ctx.session.isRegistered = user.registered;
-    ctx.session.isRegistered = false;
+    ctx.session.isRegistered = user.registered;
+    // ctx.session.isRegistered = false;
     ctx.i18n.locale(user.locale);
-    ctx.session.isRegistered
-      ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: mainKeyboard(ctx) })
-      : await ctx.replyWithPhoto(new InputFile('./dist/public/assets/activia_ru.png'), {
-          caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('chooseLang'),
-          reply_markup: this.menu,
-        });
+    if (ctx.session.isRegistered) {
+      await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: mainKeyboard(ctx) });
+    } else {
+      await ctx.replyWithMediaGroup([
+        {
+          type: 'photo',
+          media: new InputFile('./dist/public/assets/activia_ru.png'),
+        },
+        {
+          type: 'photo',
+          media: new InputFile('./dist/public/assets/activia_uz.png'),
+        },
+      ]);
+      await ctx.reply(i18n.t('ru', 'start') + '\n\n' + i18n.t('uz', 'start') + '\n\n' + ctx.i18n.t('chooseLang'), {
+        reply_markup: this.menu,
+      });
+    }
   };
   @Command('admin')
   admin = async (ctx: BotContext) => {

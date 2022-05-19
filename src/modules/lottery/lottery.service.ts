@@ -43,11 +43,6 @@ export class LotteryService {
     //     prize: this.em.getReference(Prize, 1),
     //   });
     // }
-
-    // const avaiblePrizes = await this.em.find(PrizeValue, {
-    //   prize: this.em.getReference(Prize, Number(createLotteryDto.prize)),
-    // });
-    // console.log(avaiblePrizes);
     const avaiblePrizes = await this.em.find(
       PrizeValue,
       { winners: { $eq: null }, prize: requestedPrize },

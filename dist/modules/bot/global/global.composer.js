@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.globalComposer = void 0;
 const menu_1 = require("@grammyjs/menu");
@@ -25,6 +28,7 @@ const router_1 = require("@grammyjs/router");
 const app_config_service_1 = require("../../app-config/app-config.service");
 const keyboards_1 = require("../common/keyboards");
 const nestjs_pino_1 = require("nestjs-pino");
+const i18n_1 = __importDefault(require("../middleware/i18n"));
 let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
     constructor(globalService, AppConfigService, logger) {
         super();
@@ -39,14 +43,14 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                         await this.globalService.updateUser(ctx.from.id, { locale: lang });
                         ctx.i18n.locale(lang);
                         ctx.session.step = enums_1.BotStep.age;
-                        await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askAge') });
+                        await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askAge'));
                     }));
                     break;
                 }
                 case enums_1.BotStep.age: {
                     range.text((0, helpers_1.label)({ text: 'yes' }), async (ctx) => {
                         ctx.session.step = enums_1.BotStep.gender;
-                        await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender') });
+                        await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askGender'));
                     });
                     range.text((0, helpers_1.label)({ text: 'no' }), async (ctx) => {
                         ctx.session.step = enums_1.BotStep.default;
@@ -59,7 +63,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                     Object.values(User_1.UserGender).map((gender) => {
                         range.text((0, helpers_1.label)({ text: gender }), async (ctx) => {
                             ctx.session.step = enums_1.BotStep.city;
-                            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
+                            await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity'));
                         });
                     });
                     break;
@@ -69,7 +73,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                         range.text((0, helpers_1.label)({ text: city.translation[locale] }), async (ctx) => {
                             ctx.session.step = enums_1.BotStep.promo;
                             await this.globalService.updateCity(ctx.from.id, city.id);
-                            await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo') });
+                            await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askPromo'));
                         }),
                             index % 3 === 0 && range.row();
                     });
@@ -117,14 +121,26 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
         this.start = async (ctx) => {
             ctx.session.step = enums_1.BotStep.default;
             const user = await this.globalService.getUser(ctx);
-            ctx.session.isRegistered = false;
+            ctx.session.isRegistered = user.registered;
             ctx.i18n.locale(user.locale);
-            ctx.session.isRegistered
-                ? await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) })
-                : await ctx.replyWithPhoto(new grammy_1.InputFile('./dist/public/assets/activia_ru.png'), {
-                    caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('chooseLang'),
+            if (ctx.session.isRegistered) {
+                await ctx.reply(ctx.i18n.t('mainMenu'), { reply_markup: (0, keyboards_1.mainKeyboard)(ctx) });
+            }
+            else {
+                await ctx.replyWithMediaGroup([
+                    {
+                        type: 'photo',
+                        media: new grammy_1.InputFile('./dist/public/assets/activia_ru.png'),
+                    },
+                    {
+                        type: 'photo',
+                        media: new grammy_1.InputFile('./dist/public/assets/activia_uz.png'),
+                    },
+                ]);
+                await ctx.reply(i18n_1.default.t('ru', 'start') + '\n\n' + i18n_1.default.t('uz', 'start') + '\n\n' + ctx.i18n.t('chooseLang'), {
                     reply_markup: this.menu,
                 });
+            }
         };
         this.admin = async (ctx) => {
             if (ctx.match) {
