@@ -75,7 +75,7 @@ export default {
         show: false,
         data: {},
       },
-      items: [],
+      items: [{winners:[]}],
       fields: [
         { key: 'id', label: 'Id Розыгрыша' },
         { key: 'start', label: 'Начало' },
@@ -148,8 +148,8 @@ export default {
         }, {})
         this.$http({ method: 'POST', url: `/v1/lottery/`, data: data })
           .then((r) => {
-            this.modalConfig.show = false
             this.items.push(r.data)
+            this.modalConfig.show = false
           })
       } else if (this.modalConfig.data.type == 'editLottery') {
         const status_id = this.modalConfig.data.fields[0].value
