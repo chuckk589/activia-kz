@@ -12,6 +12,7 @@ export class RetrieveUserDto {
     this.promo = user.promo?.translation?.getLocalizedLabel(Locale.RU) || null;
     this.createdAt = user.createdAt.toLocaleString();
     this.city = user.city?.translation?.getLocalizedLabel(Locale.RU) || null;
+    this.registered = user.registered;
   }
   id: number;
   chatId: string;

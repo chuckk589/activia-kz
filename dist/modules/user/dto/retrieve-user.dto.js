@@ -14,6 +14,7 @@ class RetrieveUserDto {
         this.promo = user.promo?.translation?.getLocalizedLabel(User_1.Locale.RU) || null;
         this.createdAt = user.createdAt.toLocaleString();
         this.city = user.city?.translation?.getLocalizedLabel(User_1.Locale.RU) || null;
+        this.registered = user.registered;
     }
 }
 exports.RetrieveUserDto = RetrieveUserDto;
