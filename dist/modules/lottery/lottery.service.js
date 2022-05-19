@@ -26,6 +26,9 @@ let LotteryService = class LotteryService {
         this.em = em;
     }
     async create(createLotteryDto) {
+        if (createLotteryDto.primaryWinners < createLotteryDto.reserveWinners) {
+            throw new common_1.HttpException(`Number of primaryWinners should bot be less than reserveWiners , \nPrimary: ${Number(createLotteryDto.primaryWinners)}, \nReserved: ${createLotteryDto.reserveWinners}`, common_1.HttpStatus.BAD_REQUEST);
+        }
         const requestedPrize = await this.em.findOne(Prize_1.Prize, { id: Number(createLotteryDto.prize) });
         const where = {
             ...(requestedPrize.name == 'PRIZE_WEEKLY'
@@ -42,9 +45,9 @@ let LotteryService = class LotteryService {
             ...where,
             status: { name: CheckStatus_1.CheckState.APPROVED },
         }, { populate: ['winners'] });
-        const avaiblePrizes = await this.em.find(PrizeValue_1.PrizeValue, { winners: { $eq: null }, prize: requestedPrize }, { populate: ['winners', 'prize'] });
-        if (avaiblePrizes.length < Number(createLotteryDto.primaryWinners)) {
-            throw new common_1.HttpException(`Not enough prizes of requested type ${requestedPrize.name}, \nRequested ${Number(createLotteryDto.primaryWinners)}, \nAvailable: ${avaiblePrizes.length}`, common_1.HttpStatus.BAD_REQUEST);
+        const avaivablePrizes = await this.em.find(PrizeValue_1.PrizeValue, { winners: { $eq: null }, prize: requestedPrize }, { populate: ['winners', 'prize'] });
+        if (avaivablePrizes.length < Number(createLotteryDto.primaryWinners)) {
+            throw new common_1.HttpException(`Not enough prizes of requested type ${requestedPrize.name}, \nRequested ${Number(createLotteryDto.primaryWinners)}, \nAvailable: ${avaivablePrizes.length}`, common_1.HttpStatus.BAD_REQUEST);
         }
         const totalWinners = Number(createLotteryDto.primaryWinners) + Number(createLotteryDto.reserveWinners);
         if (checks.length < totalWinners) {
@@ -60,7 +63,7 @@ let LotteryService = class LotteryService {
             winners: winners.map((winner, index) => this.em.create(Winner_1.Winner, {
                 check: this.em.getReference(Check_1.Check, winner.id),
                 primary: index < Number(createLotteryDto.primaryWinners),
-                prize_value: avaiblePrizes[0],
+                prize_value: avaivablePrizes[index % Number(createLotteryDto.primaryWinners)],
             })),
         });
         await this.em.persistAndFlush(lottery);
