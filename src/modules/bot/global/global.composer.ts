@@ -55,7 +55,7 @@ export class globalComposer extends BaseComposer {
         Object.values(UserGender).map((gender) => {
           range.text(label({ text: gender }), async (ctx) => {
             ctx.session.step = BotStep.city;
-            //await ctx.editMessageCaption({ caption: ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity') });
+            await this.globalService.updateUser(ctx.from.id, { gender: gender });
             await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity'));
           });
         });

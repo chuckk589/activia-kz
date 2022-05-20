@@ -63,6 +63,7 @@ let globalComposer = class globalComposer extends interfaces_1.BaseComposer {
                     Object.values(User_1.UserGender).map((gender) => {
                         range.text((0, helpers_1.label)({ text: gender }), async (ctx) => {
                             ctx.session.step = enums_1.BotStep.city;
+                            await this.globalService.updateUser(ctx.from.id, { gender: gender });
                             await ctx.editMessageText(ctx.i18n.t('start') + '\n\n' + ctx.i18n.t('askCity'));
                         });
                     });
