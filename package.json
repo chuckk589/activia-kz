@@ -50,11 +50,11 @@
     "pino-http": "^7.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "telegram": "^2.7.32",
-    "vue-meta": "^2.4.0",
-    "vue-property-decorator": "^8.5.1"
+    "telegram": "^2.7.32"
   },
   "devDependencies": {
+    "vue-meta": "^2.4.0",
+    "vue-property-decorator": "^8.5.1",
     "@babel/core": "^7.13.10",
     "@coreui/coreui-pro": "^3.4.0",
     "@coreui/icons": "^2.0.0-rc.0",

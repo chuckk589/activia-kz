@@ -11,7 +11,6 @@ export default {
   },
   methods: {
     openConfigModal() {
-      console.log(this.params)
       this.params.context.editWinner(this.params.data)
     }
   }
