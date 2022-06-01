@@ -10,11 +10,7 @@ import { TelegramController } from 'src/telegram/telegram.controller';
 
 @Injectable()
 export class globalService {
-  constructor(private readonly em: EntityManager, private readonly TelegramController: TelegramController) {
-    // this.em.findOne(User, { chatId: String(1) }, { populate: ['city'] }).then((user) => {
-    //   Loaded<User>(user);
-    // });
-  }
+  constructor(private readonly em: EntityManager, private readonly TelegramController: TelegramController) {}
   async updatePassword(from: number) {
     const user = await this.em.findOne(User, { chatId: String(from) });
     const newpass = user.makePassword();

@@ -27,7 +27,7 @@ let LotteryService = class LotteryService {
     }
     async create(createLotteryDto) {
         if (createLotteryDto.primaryWinners < createLotteryDto.reserveWinners) {
-            throw new common_1.HttpException(`Number of primaryWinners should bot be less than reserveWiners , \nPrimary: ${Number(createLotteryDto.primaryWinners)}, \nReserved: ${createLotteryDto.reserveWinners}`, common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.HttpException(`Number of primaryWinners should bot be less than reserveWiners , \nPrimary: ${Number(createLotteryDto.primaryWinners)}, \nReserve: ${createLotteryDto.reserveWinners}`, common_1.HttpStatus.BAD_REQUEST);
         }
         const requestedPrize = await this.em.findOne(Prize_1.Prize, { id: Number(createLotteryDto.prize) });
         const where = {
@@ -71,6 +71,7 @@ let LotteryService = class LotteryService {
             'status.translation.values',
             'prize.translation.values',
             'winners.check.user.city.translation.values',
+            'winners.prize_value',
         ]);
         return new retrieve_lottery_dto_1.RetrieveLotteryDto(lottery);
     }
@@ -80,6 +81,7 @@ let LotteryService = class LotteryService {
                 'status.translation.values',
                 'prize.translation.values',
                 'winners.check.user.city.translation.values',
+                'winners.prize_value',
             ],
         })).map((lottery) => new retrieve_lottery_dto_1.RetrieveLotteryDto(lottery));
     }

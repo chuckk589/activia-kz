@@ -9,7 +9,6 @@ export default async function (ctx: BotContext, next: NextFunction): Promise<voi
     if (date) {
       if (preventOldUpdates < ctx.msg.date) {
         await next();
-      } else {
       }
     } else {
       await next();

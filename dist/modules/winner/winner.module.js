@@ -15,7 +15,7 @@ let WinnerModule = class WinnerModule {
 WinnerModule = __decorate([
     (0, common_1.Module)({
         controllers: [winner_controller_1.WinnerController],
-        providers: [winner_service_1.WinnerService]
+        providers: [winner_service_1.WinnerService],
     })
 ], WinnerModule);
 exports.WinnerModule = WinnerModule;

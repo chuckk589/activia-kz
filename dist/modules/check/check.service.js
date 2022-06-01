@@ -34,7 +34,7 @@ let CheckService = class CheckService {
         return (await this.em.find(Check_1.Check, {}, { populate: ['user.city.translation.values', 'status.translation.values', 'status.comment.values'] })).map((check) => new retrieve_check_dto_1.RetrieveCheckDto(check));
     }
     async update(id, updateCheckDto) {
-        const user = await this.em.findOneOrFail(User_1.User, { checks: { id: id } }, { populate: ['checks', 'checks.status'] });
+        const user = await this.em.findOneOrFail(User_1.User, { checks: { id } }, { populate: ['checks', 'checks.status'] });
         const check = user.checks.getItems().find((check) => check.id === id);
         const approvedAmmount = user.checks.getItems().filter((check) => check.status.name === CheckStatus_1.CheckState.APPROVED).length;
         const check_status = await this.em.findOneOrFail(CheckStatus_1.CheckStatus, { id: Number(updateCheckDto.status) }, { populate: ['comment', 'translation'] });

@@ -34,14 +34,39 @@ let WinnerService = class WinnerService {
         const barCode = await bwip_js_1.default.toBuffer({
             bcid: 'qrcode',
             text: winner.prize_value.qr_payload,
+            paddingheight: 8,
+            paddingwidth: 8,
         });
-        await this.bot.api.sendPhoto(winner.check.user.chatId, new grammy_1.InputFile(barCode), {
-            caption: message,
-        });
+        if (winner.lottery.prize.name !== 'PRIZE_MAIN') {
+            await this.bot.api.sendPhoto(winner.check.user.chatId, new grammy_1.InputFile(barCode), {
+                caption: message,
+            });
+        }
+        else {
+            await this.bot.api.sendMessage(winner.check.user.chatId, message);
+        }
         await this.em.nativeUpdate(Winner_1.Winner, { id }, { notified: true });
     }
     async update(id, updateWinnerDto) {
-        return await this.em.nativeUpdate(Winner_1.Winner, { id }, { confirmed: updateWinnerDto.confirmed });
+        if (updateWinnerDto.confirmed) {
+            const pendingWinner = await this.em.findOne(Winner_1.Winner, { id: id }, { populate: ['prize_value'] });
+            const existingWinner = await this.em.findOne(Winner_1.Winner, {
+                prize_value: {
+                    id: pendingWinner.prize_value.id,
+                },
+                confirmed: true,
+            }, { populate: ['check.user'] });
+            if (existingWinner) {
+                throw new common_1.HttpException(`Confirmed winner associated with this prize already exists`, common_1.HttpStatus.BAD_REQUEST);
+            }
+            else {
+                pendingWinner.confirmed = true;
+                return await this.em.persistAndFlush(pendingWinner);
+            }
+        }
+        else {
+            return await this.em.nativeUpdate(Winner_1.Winner, { id }, { confirmed: updateWinnerDto.confirmed });
+        }
     }
 };
 WinnerService = __decorate([

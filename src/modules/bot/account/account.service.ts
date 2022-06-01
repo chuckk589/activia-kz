@@ -27,13 +27,17 @@ export class AccountService {
     const lotteries = await this.em.find(
       Lottery,
       {
-        winners: {
-          confirmed: true,
-          check: { status: { name: CheckState.APPROVED } },
-        },
         status: { name: LotteryState.ENDED },
       },
-      { populate: ['prize.translation.values', 'winners.check', 'winners.check.user'] },
+      {
+        populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
+        populateWhere: {
+          winners: {
+            confirmed: true,
+            check: { status: { name: CheckState.APPROVED } },
+          },
+        },
+      },
     );
     return lotteries.map((l) => new BotLotteryDto(l, ctx.i18n.locale() as Locale));
   }
@@ -41,13 +45,17 @@ export class AccountService {
     const lotteries = await this.em.find(
       Lottery,
       {
-        winners: {
-          confirmed: true,
-          check: { user: { chatId: String(ctx.from.id) }, status: { name: CheckState.APPROVED } },
-        },
         status: { name: LotteryState.ENDED },
       },
-      { populate: ['prize.translation.values', 'winners.check'] },
+      {
+        populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
+        populateWhere: {
+          winners: {
+            confirmed: true,
+            check: { user: { chatId: String(ctx.from.id) }, status: { name: CheckState.APPROVED } },
+          },
+        },
+      },
     );
     return lotteries;
   }

@@ -4,6 +4,6 @@ import { WinnerController } from './winner.controller';
 
 @Module({
   controllers: [WinnerController],
-  providers: [WinnerService]
+  providers: [WinnerService],
 })
 export class WinnerModule {}

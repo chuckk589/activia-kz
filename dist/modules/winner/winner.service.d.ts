@@ -5,7 +5,7 @@ import { UpdateWinnerDto } from './dto/update-winner.dto';
 export declare class WinnerService {
     private readonly em;
     private bot;
-    sendNotification(id: number): Promise<void>;
     constructor(em: EntityManager, bot: Bot<BotContext>);
-    update(id: number, updateWinnerDto: UpdateWinnerDto): Promise<number>;
+    sendNotification(id: number): Promise<void>;
+    update(id: number, updateWinnerDto: UpdateWinnerDto): Promise<number | void>;
 }

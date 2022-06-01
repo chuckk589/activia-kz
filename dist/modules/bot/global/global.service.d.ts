@@ -5,6 +5,7 @@ import { TelegramController } from 'src/telegram/telegram.controller';
 export declare class globalService {
     private readonly em;
     private readonly TelegramController;
+    constructor(em: EntityManager, TelegramController: TelegramController);
     updatePassword(from: number): Promise<string>;
     getUserChatIds(): Promise<string[]>;
     singleForward(message_id: number, fromPeer: string | number, toPeer: string | number): Promise<void>;
@@ -13,6 +14,5 @@ export declare class globalService {
     updatePromo(from: number, id: number): Promise<void>;
     updateCity(from: number, id: number): Promise<void>;
     updateUser(from: number, options: Partial<User>): Promise<void>;
-    constructor(em: EntityManager, TelegramController: TelegramController);
     getUser(ctx: BotContext): Promise<import("@mikro-orm/core").EntityDTO<import("@mikro-orm/core").Loaded<User, never>>>;
 }

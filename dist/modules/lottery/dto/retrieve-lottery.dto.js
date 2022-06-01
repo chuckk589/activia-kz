@@ -12,7 +12,10 @@ class RetrieveLotteryDto {
         this.primaryWinners = lottery.primaryWinners;
         this.reserveWinners = lottery.reserveWinners;
         this.createdAt = lottery.createdAt.toLocaleString();
-        this.winners = lottery.winners.getItems().map((winner) => new RetrieveWinnerDto(winner));
+        this.winners = lottery.winners
+            .getItems()
+            .map((winner) => new RetrieveWinnerDto(winner))
+            .sort((a, b) => Number(b.primary) - Number(a.primary));
     }
 }
 exports.RetrieveLotteryDto = RetrieveLotteryDto;
@@ -27,6 +30,8 @@ class RetrieveWinnerDto {
         this.city = winner.check.user.city.translation.getLocalizedLabel(User_1.Locale.RU);
         this.checkPath = winner.check.path;
         this.primary = winner.primary;
+        this.prize = winner.prize_value.qr_payload;
+        this.prizeId = winner.prize_value.id;
     }
 }
 //# sourceMappingURL=retrieve-lottery.dto.js.map

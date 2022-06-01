@@ -23,5 +23,7 @@ declare class RetrieveWinnerDto {
     phone: string;
     city: string;
     checkPath: string;
+    prize: string;
+    prizeId: number;
 }
 export {};

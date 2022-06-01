@@ -12,7 +12,10 @@ export class RetrieveLotteryDto {
     this.primaryWinners = lottery.primaryWinners;
     this.reserveWinners = lottery.reserveWinners;
     this.createdAt = lottery.createdAt.toLocaleString();
-    this.winners = lottery.winners.getItems().map((winner) => new RetrieveWinnerDto(winner));
+    this.winners = lottery.winners
+      .getItems()
+      .map((winner) => new RetrieveWinnerDto(winner))
+      .sort((a, b) => Number(b.primary) - Number(a.primary));
   }
   id: number;
   start: string;
@@ -35,6 +38,8 @@ class RetrieveWinnerDto {
     this.city = winner.check.user.city.translation.getLocalizedLabel(Locale.RU);
     this.checkPath = winner.check.path;
     this.primary = winner.primary;
+    this.prize = winner.prize_value.qr_payload;
+    this.prizeId = winner.prize_value.id;
   }
   id: number;
   confirmed: boolean;
@@ -45,4 +50,6 @@ class RetrieveWinnerDto {
   phone: string;
   city: string;
   checkPath: string;
+  prize: string;
+  prizeId: number;
 }

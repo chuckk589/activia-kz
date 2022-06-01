@@ -7,9 +7,11 @@
     </CExtendedModal>
     <CDataTable sorter hover :items="items" :fields="fields" column-filter @row-clicked="rowClick">
       <template #over-table>
-        <CLink class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv" target="_blank">Скачать
+        <CLink class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv"
+          target="_blank">Скачать
           (.csv)</CLink>
-        <CButton shape="square" size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">Новый розыгрыш</CButton>
+        <CButton shape="square" size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">
+          Новый розыгрыш</CButton>
       </template>
       <template #action="{ item }">
         <td>
@@ -26,6 +28,7 @@
             <CCol>Подтвержден</CCol>
             <CCol>Уведомлен</CCol>
             <CCol>Id чека</CCol>
+            <CCol>Id сертификата</CCol>
             <CCol>Имя</CCol>
             <CCol>Номер</CCol>
             <CCol>Город</CCol>
@@ -37,8 +40,9 @@
             <CCol>{{ winner.confirmed ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.notified ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.fancyId }}</CCol>
+            <CCol>{{ winner.prizeId }}</CCol>
             <CCol>{{ winner.credentials }}</CCol>
-            <CCol>{{ winner.phone }}</CCol>
+            <CCol>{{ phoneFormatter(winner.phone) }}</CCol>
             <CCol>{{ winner.city }}</CCol>
             <CCol>
               <CButton shape="square" size="sm" @click="viewCheck(winner.checkPath)" color="primary">
@@ -46,7 +50,8 @@
               </CButton>
             </CCol>
             <CCol>
-              <CDropdown addTogglerClasses="btn-square" toggler-text="Действия" class="btn-square m-2" size="sm" color="primary">
+              <CDropdown addTogglerClasses="btn-square" toggler-text="Действия" class="btn-square m-2" size="sm"
+                color="primary">
                 <CDropdownItem @click="sendNotify(winner)">Уведомить о выигрыше</CDropdownItem>
                 <CDropdownItem @click="approveWinner(winner)">Подтвердить</CDropdownItem>
               </CDropdown>
@@ -75,7 +80,7 @@ export default {
         show: false,
         data: {},
       },
-      items: [{winners:[]}],
+      items: [{ winners: [] }],
       fields: [
         { key: 'id', label: 'Id Розыгрыша' },
         { key: 'start', label: 'Начало' },
@@ -95,6 +100,9 @@ export default {
     })
   },
   methods: {
+    phoneFormatter(phone) {
+      return phone.slice(0, -6) + 'XXXX' + phone.slice(-2)
+    },
     viewCheck(path) {
       this.modalConfig.data = {
         path: path,
@@ -192,12 +200,12 @@ export default {
       this.modalConfig.show = true
     },
     getCurrentItems(items = this.items) {
-      const cols = 'Id Розыгрыша,Дата,Приз,Основной,Подтвержден,Уведомлен,Id чека,Имя,Номер,Город'
+      const cols = 'Id Розыгрыша,Дата,Приз,Основной,Подтвержден,Уведомлен,Id чека,Имя,Номер,Город,Сертификат'
       const csvCode = 'data:text/csv;charset=utf-8,' + cols + '%0A' + encodeURIComponent(
         items.reduce((sum, cur) => {
           const header = `${cur.id},${cur.createdAt},${cur.prize},${cur.primary ? 'Да' : 'Нет'},${cur.confirmed ? 'Да' : 'Нет'},${cur.notified ? 'Да' : 'Нет'}`
           cur.winners.forEach(w => {
-            sum = sum + header + `,${w.fancyId},${w.credentials},${w.phone},${w.city}\n`
+            sum = sum + header + `,${w.fancyId},${w.credentials},${w.phone},${w.city},${w.prize}\n`
           })
           return sum
         }, '')

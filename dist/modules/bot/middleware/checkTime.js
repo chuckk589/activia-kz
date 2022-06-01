@@ -8,8 +8,6 @@ async function default_1(ctx, next) {
             if (preventOldUpdates < ctx.msg.date) {
                 await next();
             }
-            else {
-            }
         }
         else {
             await next();

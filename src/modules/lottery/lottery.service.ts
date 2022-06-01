@@ -22,7 +22,7 @@ export class LotteryService {
       throw new HttpException(
         `Number of primaryWinners should bot be less than reserveWiners , \nPrimary: ${Number(
           createLotteryDto.primaryWinners,
-        )}, \nReserved: ${createLotteryDto.reserveWinners}`,
+        )}, \nReserve: ${createLotteryDto.reserveWinners}`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -46,12 +46,6 @@ export class LotteryService {
       },
       { populate: ['winners'] },
     );
-    // for (let index = 0; index < 20; index++) {
-    //   await this.em.nativeInsert(PrizeValue, {
-    //     qr_payload: Math.random().toString(36).substring(2, 15),
-    //     prize: this.em.getReference(Prize, 1),
-    //   });
-    // }
     const avaivablePrizes = await this.em.find(
       PrizeValue,
       { winners: { $eq: null }, prize: requestedPrize },
@@ -94,6 +88,7 @@ export class LotteryService {
       'status.translation.values',
       'prize.translation.values',
       'winners.check.user.city.translation.values',
+      'winners.prize_value',
     ]);
     return new RetrieveLotteryDto(lottery);
   }
@@ -108,6 +103,7 @@ export class LotteryService {
             'status.translation.values',
             'prize.translation.values',
             'winners.check.user.city.translation.values',
+            'winners.prize_value',
           ],
         },
       )

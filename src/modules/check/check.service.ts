@@ -26,7 +26,7 @@ export class CheckService {
   }
 
   async update(id: number, updateCheckDto: UpdateCheckDto) {
-    const user = await this.em.findOneOrFail(User, { checks: { id: id } }, { populate: ['checks', 'checks.status'] });
+    const user = await this.em.findOneOrFail(User, { checks: { id } }, { populate: ['checks', 'checks.status'] });
     const check = user.checks.getItems().find((check) => check.id === id);
     const approvedAmmount = user.checks.getItems().filter((check) => check.status.name === CheckState.APPROVED).length;
     const check_status = await this.em.findOneOrFail(
