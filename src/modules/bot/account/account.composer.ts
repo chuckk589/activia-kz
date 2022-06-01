@@ -69,7 +69,6 @@ export class AccountComposer extends BaseComposer {
       caption: ctx.i18n.t('prizesContent'),
     });
     await ctx.reply(prizeMessage(ctx, lotteries));
-    // await ctx.reply(prizeMessage(ctx, lotteries));
   };
   // @Hears('prizes', 'filter')
   // Prizes = async (ctx: BotContext) => {

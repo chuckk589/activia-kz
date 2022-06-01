@@ -42,6 +42,7 @@ let AccountService = class AccountService {
             status: { name: LotteryStatus_1.LotteryState.ENDED },
         }, {
             populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
+            refresh: true,
             populateWhere: {
                 winners: {
                     confirmed: true,
@@ -55,6 +56,7 @@ let AccountService = class AccountService {
         const lotteries = await this.em.find(Lottery_1.Lottery, {
             status: { name: LotteryStatus_1.LotteryState.ENDED },
         }, {
+            refresh: true,
             populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
             populateWhere: {
                 winners: {
@@ -63,7 +65,7 @@ let AccountService = class AccountService {
                 },
             },
         });
-        return lotteries;
+        return lotteries.filter((lottery) => lottery.winners.length);
     }
     async getUserChecks(ctx) {
         const checks = await this.em.find(Check_1.Check, { user: { chatId: String(ctx.from.id) } }, { populate: ['status.comment', 'status.translation.values'] });

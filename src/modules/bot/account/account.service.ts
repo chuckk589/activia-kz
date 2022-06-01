@@ -1,4 +1,4 @@
-import { EntityDTO, EntityManager, UniqueConstraintViolationException, wrap } from '@mikro-orm/core';
+import { EntityDTO, EntityManager, PopulateHint, UniqueConstraintViolationException, wrap } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from 'src/modules/app-config/app-config.service';
 import { Locale, User } from 'src/modules/mikroorm/entities/User';
@@ -31,6 +31,7 @@ export class AccountService {
       },
       {
         populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
+        refresh: true,
         populateWhere: {
           winners: {
             confirmed: true,
@@ -48,6 +49,7 @@ export class AccountService {
         status: { name: LotteryState.ENDED },
       },
       {
+        refresh: true,
         populate: ['prize.translation.values', 'winners.check', 'winners.check.user'],
         populateWhere: {
           winners: {
@@ -57,7 +59,7 @@ export class AccountService {
         },
       },
     );
-    return lotteries;
+    return lotteries.filter((lottery) => lottery.winners.length);
   }
   async getUserChecks(ctx: BotContext): Promise<string> {
     const checks = await this.em.find(
