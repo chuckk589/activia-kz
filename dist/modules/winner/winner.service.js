@@ -22,7 +22,7 @@ const grammy_1 = require("grammy");
 const constants_1 = require("../../constants");
 const i18n_1 = __importDefault(require("../bot/middleware/i18n"));
 const Winner_1 = require("../mikroorm/entities/Winner");
-const bwip_js_1 = __importDefault(require("bwip-js"));
+const qrcode_1 = __importDefault(require("qrcode"));
 let WinnerService = class WinnerService {
     constructor(em, bot) {
         this.em = em;
@@ -31,11 +31,8 @@ let WinnerService = class WinnerService {
     async sendNotification(id) {
         const winner = await this.em.findOneOrFail(Winner_1.Winner, { id }, { populate: ['check.user', 'lottery.prize', 'prize_value'] });
         const message = i18n_1.default.t(winner.check.user.locale, winner.lottery.prize.name, { check_id: winner.check.fancyId });
-        const barCode = await bwip_js_1.default.toBuffer({
-            bcid: 'qrcode',
-            text: winner.prize_value.qr_payload,
-            paddingheight: 8,
-            paddingwidth: 8,
+        const barCode = await qrcode_1.default.toBuffer(winner.prize_value.qr_payload, {
+            scale: 15,
         });
         if (winner.lottery.prize.name !== 'PRIZE_MAIN') {
             await this.bot.api.sendPhoto(winner.check.user.chatId, new grammy_1.InputFile(barCode), {

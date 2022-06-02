@@ -6,7 +6,7 @@ import { BotContext } from 'src/types/interfaces';
 import i18n from '../bot/middleware/i18n';
 import { Winner } from '../mikroorm/entities/Winner';
 import { UpdateWinnerDto } from './dto/update-winner.dto';
-import bwipjs from 'bwip-js';
+import QRCode from 'qrcode';
 
 @Injectable()
 export class WinnerService {
@@ -18,11 +18,18 @@ export class WinnerService {
       { populate: ['check.user', 'lottery.prize', 'prize_value'] },
     );
     const message = i18n.t(winner.check.user.locale, winner.lottery.prize.name, { check_id: winner.check.fancyId });
-    const barCode = await bwipjs.toBuffer({
-      bcid: 'qrcode', // Barcode type
-      text: winner.prize_value.qr_payload, // Text to encode
-      paddingheight: 8,
-      paddingwidth: 8,
+    // const barCode = await bwipjs.toBuffer({
+    //   bcid: 'qrcode', // Barcode type
+    //   //text: winner.prize_value.qr_payload, // Text to encode
+    //   text: 'V5811600007059',
+    //   paddingheight: 8,
+    //   textsize: 2.2,
+    //   scale: 15,
+    //   alttext: 'V5811600007059',
+    //   paddingwidth: 8,
+    // });
+    const barCode = await QRCode.toBuffer(winner.prize_value.qr_payload, {
+      scale: 15,
     });
     //await this.bot.api.sendMessage(winner.check.user.chatId, message);
     if (winner.lottery.prize.name !== 'PRIZE_MAIN') {
