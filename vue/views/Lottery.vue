@@ -5,13 +5,19 @@
         <CImg v-if="modalConfig.data.path" fluidGrow :src="modalConfig.data.path"></CImg>
       </template>
     </CExtendedModal>
-    <CDataTable sorter hover :items="items" :fields="fields" column-filter @row-clicked="rowClick">
+    <CDataTable style="user-select: none;" sorter hover :items="items" :fields="fields" column-filter @row-clicked="rowClick">
       <template #over-table>
-        <CLink class="btn-square btn btn-primary mb-2 btn-sm" :href="getCurrentItems()" download="table-data.csv"
-          target="_blank">Скачать
-          (.csv)</CLink>
-        <CButton shape="square" size="sm" style="margin-left:3px;" class="btn btn-primary mb-2" @click="newLotteryInit">
-          Новый розыгрыш</CButton>
+        <div style="display:flex;">
+          <CLink class="btn-square btn btn-primary btn-sm" :href="getCurrentItems()" style="margin-right:3px;"
+            download="table-data.csv" target="_blank">Скачать
+            (.csv)</CLink>
+          <CButton shape="square" size="sm" class="btn btn-primary " @click="newLotteryInit">
+            Новый розыгрыш</CButton>
+          <div style="margin-left:auto; display: flex; align-items: center;">
+            <span style="margin-right:5px;">Режим для записи</span>
+            <CSwitch color="primary" size="sm" :checked.sync="mode" />
+          </div>
+        </div>
       </template>
       <template #action="{ item }">
         <td>
@@ -35,7 +41,7 @@
             <CCol>Чек</CCol>
             <CCol></CCol>
           </CRow>
-          <CRow v-for="(winner, index) in item.winners" :key="index">
+          <CRow v-for="(winner, index) in item.winners" v-if="!mode || winner.primary" :key="index">
             <CCol>{{ winner.primary ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.confirmed ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.notified ? "Да" : "Нет" }}</CCol>
@@ -75,6 +81,7 @@ export default {
   },
   data() {
     return {
+      mode: false,
       collapseDuration: 0,
       modalConfig: {
         show: false,
@@ -140,7 +147,7 @@ export default {
           { label: 'Конец', key: 'end', type: "date" },
           { label: 'Что разыгрываем', key: "prize", select: this.$ctable.prizes, value: this.$ctable.prizes[0].value },
           { label: 'Основные победители', key: "primaryWinners", type: "number" },
-          { label: 'Запасные победители', key: "reserveWinners", type: "number" }
+          // { label: 'Запасные победители', key: "reserveWinners", type: "number" }
         ],
         footer: 'Создать',
         header: 'Новый розыгрыш',
@@ -150,10 +157,11 @@ export default {
     },
     closeModalHandler() {
       if (this.modalConfig.data.type == 'newLottery') {
-        const data = this.modalConfig.data.fields.reduce((s, c) => {
+        let data = this.modalConfig.data.fields.reduce((s, c) => {
           s[c.key] = c.value
           return s
         }, {})
+        data.reserveWinners = data.primaryWinners
         this.$http({ method: 'POST', url: `/v1/lottery/`, data: data })
           .then((r) => {
             this.items.push(r.data)
