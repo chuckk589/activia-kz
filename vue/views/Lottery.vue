@@ -46,7 +46,7 @@
             <CCol>{{ winner.confirmed ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.notified ? "Да" : "Нет" }}</CCol>
             <CCol>{{ winner.fancyId }}</CCol>
-            <CCol>{{ winner.prizeId }}</CCol>
+            <CCol>{{ winner.prize }}</CCol>
             <CCol>{{ winner.credentials }}</CCol>
             <CCol>{{ phoneFormatter(winner.phone) }}</CCol>
             <CCol>{{ winner.city }}</CCol>
